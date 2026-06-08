@@ -117,7 +117,7 @@
   .barra-col { cursor: pointer; }
   .barra-col .barra-val { transition: height .3s, opacity .15s; }
   .barra-col:hover .barra-val { opacity: .75; }
-  .barra-col.sel .barra-val { box-shadow: 0 0 0 2px var(--ink) inset; }
+  .barra-col.sel .barra-val { box-shadow: 0 0 0 1px var(--ink) inset; }
   .barra-col.sel .barra-lbl { color: var(--ink); font-weight: 700; }
   .fonte-row { cursor: pointer; padding: 4px 6px; margin: 0 -6px; border-radius: 7px; transition: background .15s; }
   .fonte-row:hover { background: var(--claro); }
@@ -147,8 +147,8 @@
   <div class="hero-inner">
     <div class="brand">&lt;labiia_lab&gt;</div>
     <div class="tagchip">&lt;monitor de notícias/&gt;</div>
-    <h1>Inteligência artificial nos seis eixos de pesquisa do laboratório</h1>
-    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa e atualizada várias vezes ao dia. Escolha um eixo e refine pelas palavras-chave.</p>
+    <h1>Monitor de notícias sobre Inteligência Artificial (e correlatos) no Brasil</h1>
+    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa do Labiia Lab e atualizada duas vezes ao dia. Escolha um eixo e refine pelas palavras-chave, além de filtrar por semana e principais fontes.</p>
   </div>
 </section>
 
@@ -359,12 +359,13 @@ function desenharSemanas(lista){
   });
 }
 
-// 2) ranking por eixo (sempre sobre todo o acervo, p/ dar visao geral)
-function desenharRankEixos(){
+// 2) ranking por eixo (reflete o recorte filtrado)
+function desenharRankEixos(visiveis){
   const cont=document.getElementById("rank-eixos");
   const ordem=Object.keys(CORES_EIXO);
+  const base=(visiveis && visiveis.length) ? visiveis : [];
   const cont_eixo={};
-  dados.forEach(d=>{ if(d.eixo) cont_eixo[d.eixo]=(cont_eixo[d.eixo]||0)+1; });
+  base.forEach(d=>{ if(d.eixo) cont_eixo[d.eixo]=(cont_eixo[d.eixo]||0)+1; });
   const itens=ordem.filter(e=>cont_eixo[e]).map(e=>({eixo:e, qtd:cont_eixo[e]}));
   if(itens.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
   const max=Math.max(...itens.map(i=>i.qtd),1);
