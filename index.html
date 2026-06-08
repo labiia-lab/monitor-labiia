@@ -147,8 +147,8 @@
   <div class="hero-inner">
     <div class="brand">&lt;labiia_lab&gt;</div>
     <div class="tagchip">&lt;monitor de notícias/&gt;</div>
-    <h1>Monitor de notícias sobre Inteligência Artificial (e correlatos) no Brasil</h1>
-    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa do Labiia Lab e atualizada duas vezes ao dia. Escolha um eixo e refine pelas palavras-chave, além de filtrar por semana e principais fontes.</p>
+    <h1>Monitor de notícias sobre inteligência artificial (e correlatos) no Brasil</h1>
+    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa do Labiia Lab e atualizada duas vezes ao dia. Escolha um eixo, refine pelas palavras-chave e filtre por semana ou pelas principais fontes.</p>
   </div>
 </section>
 
@@ -319,7 +319,7 @@ function desenharFiltrosAtivos(){
 function atualizarEstatisticas(visiveis){
   desenharFiltrosAtivos();
   desenharSemanas(visiveis);
-  desenharRankEixos(visiveis);
+  desenharRankEixos();
   desenharTopFontes(visiveis);
 }
 
@@ -359,11 +359,19 @@ function desenharSemanas(lista){
   });
 }
 
-// 2) ranking por eixo (reflete o recorte filtrado)
-function desenharRankEixos(visiveis){
+// 2) ranking por eixo: sempre os seis eixos (acervo todo), respeitando so semana e fonte
+function desenharRankEixos(){
   const cont=document.getElementById("rank-eixos");
   const ordem=Object.keys(CORES_EIXO);
-  const base=(visiveis && visiveis.length) ? visiveis : [];
+  const q=document.getElementById("q").value.toLowerCase().trim();
+  const ffonte=document.getElementById("filtro-fonte").value;
+  const base=dados.filter(d=>{
+    if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
+    if(ffonte && d.fonte!==ffonte) return false;
+    if(filtroSemana){ const dt=parseData(d.data_pub); if(!dt || inicioSemana(dt).getTime()!==filtroSemana) return false; }
+    if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
+    return true;
+  });
   const cont_eixo={};
   base.forEach(d=>{ if(d.eixo) cont_eixo[d.eixo]=(cont_eixo[d.eixo]||0)+1; });
   const itens=ordem.filter(e=>cont_eixo[e]).map(e=>({eixo:e, qtd:cont_eixo[e]}));
