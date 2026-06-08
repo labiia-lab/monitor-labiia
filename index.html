@@ -113,6 +113,27 @@
 
   .box-vazio { font-size: 12px; color: var(--ink-soft); }
 
+  /* elementos clicaveis no painel */
+  .barra-col { cursor: pointer; }
+  .barra-col .barra-val { transition: height .3s, opacity .15s; }
+  .barra-col:hover .barra-val { opacity: .75; }
+  .barra-col.sel .barra-val { box-shadow: 0 0 0 2px var(--ink) inset; }
+  .barra-col.sel .barra-lbl { color: var(--ink); font-weight: 700; }
+  .fonte-row { cursor: pointer; padding: 4px 6px; margin: 0 -6px; border-radius: 7px; transition: background .15s; }
+  .fonte-row:hover { background: var(--claro); }
+  .fonte-row.sel { background: #4945fe14; }
+  .fonte-row.sel .fonte-nome { color: var(--azul); font-weight: 600; }
+
+  /* faixa de filtros ativos */
+  .filtros-ativos { display: none; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .filtros-ativos.ativo { display: flex; }
+  .filtros-ativos .fa-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); }
+  .fa-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; background: #4945fe14; color: var(--azul); border: 1px solid #4945fe33; padding: 5px 11px; border-radius: 99px; cursor: pointer; }
+  .fa-pill:hover { background: #4945fe22; }
+  .fa-pill .x { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .fa-limpar { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 5px 11px; border-radius: 7px; cursor: pointer; }
+  .fa-limpar:hover { border-color: var(--azul); color: var(--azul); }
+
   .state { text-align: center; padding: 70px 20px; color: var(--ink-soft); }
   .state .big { font-size: 21px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
   .spinner { width: 28px; height: 28px; border: 3px solid var(--linha); border-top-color: var(--azul); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
@@ -162,6 +183,11 @@
 
   <div class="layout">
     <div>
+      <div class="filtros-ativos" id="filtros-ativos">
+        <span class="fa-label">filtros:</span>
+        <span id="fa-pills"></span>
+        <button class="fa-limpar" id="fa-limpar">limpar tudo</button>
+      </div>
       <div class="count" id="count"></div>
       <div id="lista"><div class="state"><div class="spinner"></div>Carregando notícias do repositório...</div></div>
     </div>
@@ -207,6 +233,8 @@ document.getElementById("link-csv").href = CSV_URL;
 let dados = [];
 let eixoAtivo = null;
 let kwAtivas = new Set();
+let filtroSemana = null;   // timestamp do inicio da semana selecionada, ou null
+let filtroFonteClick = null; // nome da fonte selecionada via clique, ou null
 const limpa = s => (s||"").replace(/"/g,'');
 const normKw = s => (s||"").replace(/"/g,'').trim().toLowerCase();
 
@@ -231,6 +259,11 @@ function filtrar(){
     if(!kwAtivas.has(normKw(d.keyword))) return false;
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
+    if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
+    if(filtroSemana){
+      const dt=parseData(d.data_pub);
+      if(!dt || inicioSemana(dt).getTime()!==filtroSemana) return false;
+    }
     return true;
   });
 }
@@ -264,7 +297,27 @@ function render(){
   atualizarEstatisticas(filtrados);
 }
 
+function rotuloSemanaCompleto(t){ const d=new Date(t); const fim=new Date(t); fim.setDate(fim.getDate()+6); return rotuloSemana(d)+" a "+rotuloSemana(fim); }
+
+function desenharFiltrosAtivos(){
+  const faixa=document.getElementById("filtros-ativos");
+  const pills=document.getElementById("fa-pills");
+  let html="";
+  if(filtroSemana){ html+=`<span class="fa-pill" data-tipo="semana">semana ${rotuloSemanaCompleto(filtroSemana)} <span class="x">×</span></span>`; }
+  if(filtroFonteClick){ html+=`<span class="fa-pill" data-tipo="fonte">${filtroFonteClick} <span class="x">×</span></span>`; }
+  pills.innerHTML=html;
+  faixa.classList.toggle("ativo", !!(filtroSemana||filtroFonteClick));
+  pills.querySelectorAll(".fa-pill").forEach(p=>{
+    p.addEventListener("click",()=>{
+      if(p.dataset.tipo==="semana") filtroSemana=null;
+      if(p.dataset.tipo==="fonte") filtroFonteClick=null;
+      render();
+    });
+  });
+}
+
 function atualizarEstatisticas(visiveis){
+  desenharFiltrosAtivos();
   desenharSemanas(visiveis);
   desenharRankEixos(visiveis);
   desenharTopFontes(visiveis);
@@ -290,12 +343,20 @@ function desenharSemanas(lista){
   const max=Math.max(...semanas.map(s=>s.qtd),1);
   cont.innerHTML=`<div class="barras">${semanas.map(s=>{
     const h=Math.round((s.qtd/max)*100);
-    return `<div class="barra-col" title="${s.qtd} notícias na semana de ${rotuloSemana(s.ini)}">
+    const sel=(filtroSemana===s.ini.getTime())?" sel":"";
+    return `<div class="barra-col${sel}" data-semana="${s.ini.getTime()}" title="${s.qtd} notícias na semana de ${rotuloSemana(s.ini)} (clique para filtrar)">
       <span class="barra-num">${s.qtd}</span>
       <div class="barra-val" style="height:${h}%"></div>
       <span class="barra-lbl">${rotuloSemana(s.ini)}</span>
     </div>`;
   }).join("")}</div>`;
+  cont.querySelectorAll(".barra-col").forEach(col=>{
+    col.addEventListener("click",()=>{
+      const t=Number(col.dataset.semana);
+      filtroSemana=(filtroSemana===t)?null:t;  // toggle
+      render();
+    });
+  });
 }
 
 // 2) ranking por eixo (sempre sobre todo o acervo, p/ dar visao geral)
@@ -327,7 +388,17 @@ function desenharTopFontes(visiveis){
   base.forEach(d=>{ const f=d.fonte||"desconhecida"; cont_f[f]=(cont_f[f]||0)+1; });
   const itens=Object.entries(cont_f).sort((a,b)=>b[1]-a[1]).slice(0,6);
   if(itens.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
-  cont.innerHTML=itens.map(([f,q])=>`<div class="fonte-row"><span class="fonte-nome">${f}</span><span class="fonte-qtd">${q}</span></div>`).join("");
+  cont.innerHTML=itens.map(([f,q])=>{
+    const sel=(filtroFonteClick===f)?" sel":"";
+    return `<div class="fonte-row${sel}" data-fonte="${f.replace(/"/g,'&quot;')}"><span class="fonte-nome">${f}</span><span class="fonte-qtd">${q}</span></div>`;
+  }).join("");
+  cont.querySelectorAll(".fonte-row").forEach(row=>{
+    row.addEventListener("click",()=>{
+      const f=row.dataset.fonte;
+      filtroFonteClick=(filtroFonteClick===f)?null:f;  // toggle
+      render();
+    });
+  });
 }
 
 function kwsDoEixo(eixo){
@@ -336,6 +407,7 @@ function kwsDoEixo(eixo){
 
 function abrirEixo(eixo){
   eixoAtivo=eixo;
+  filtroSemana=null; filtroFonteClick=null;
   document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on", ch.dataset.eixo===eixo));
   const c=corEixo(eixo);
   const kws=kwsDoEixo(eixo);
@@ -401,6 +473,9 @@ Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
     if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado.</div>`; return; }
     popular(); },
   error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e o caminho dados/noticias.csv.</div>`; }
+});
+document.getElementById("fa-limpar").addEventListener("click",()=>{
+  filtroSemana=null; filtroFonteClick=null; render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 </script>
