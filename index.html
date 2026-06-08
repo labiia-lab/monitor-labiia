@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor de Notícias — IA e Governança</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --bg: #14110f;
+    --surface: #1c1916;
+    --surface-2: #252019;
+    --line: #36302a;
+    --ink: #f2ece3;
+    --ink-soft: #b7ac9d;
+    --ink-faint: #7d7466;
+    --accent: #d98a3d;
+    --accent-soft: #3a2a17;
+    --shadow: rgba(0,0,0,0.4);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Spline Sans Mono', monospace;
+    line-height: 1.5;
+    background-image: radial-gradient(circle at 15% -10%, #2a211833 0%, transparent 45%),
+                      radial-gradient(circle at 90% 0%, #3a2a1722 0%, transparent 40%);
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 48px 28px 80px; }
+
+  header { margin-bottom: 40px; border-bottom: 1px solid var(--line); padding-bottom: 32px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px; font-weight: 600;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 16px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede { color: var(--ink-soft); max-width: 620px; font-size: 14px; }
+
+  .meta-bar {
+    display: flex; flex-wrap: wrap; gap: 28px; margin-top: 26px;
+    font-size: 12px; color: var(--ink-faint);
+  }
+  .meta-bar b { color: var(--ink); font-weight: 600; }
+
+  .controls {
+    display: grid; grid-template-columns: 1fr auto auto; gap: 14px;
+    margin-bottom: 24px; align-items: center;
+  }
+  @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } }
+
+  .search {
+    position: relative;
+  }
+  .search input {
+    width: 100%; background: var(--surface); border: 1px solid var(--line);
+    color: var(--ink); padding: 13px 16px 13px 42px; border-radius: 10px;
+    font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s;
+  }
+  .search input:focus { border-color: var(--accent); }
+  .search input::placeholder { color: var(--ink-faint); }
+  .search svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); }
+
+  select {
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+    padding: 13px 16px; border-radius: 10px; font-family: inherit; font-size: 13px;
+    outline: none; cursor: pointer; min-width: 180px;
+  }
+  select:focus { border-color: var(--accent); }
+
+  .count { font-size: 13px; color: var(--ink-faint); margin-bottom: 16px; }
+  .count b { color: var(--accent); }
+
+  .cards { display: flex; flex-direction: column; gap: 1px; background: var(--line);
+           border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .card {
+    background: var(--surface); padding: 20px 24px; display: grid;
+    grid-template-columns: 1fr auto; gap: 6px 20px; transition: background .15s;
+  }
+  .card:hover { background: var(--surface-2); }
+  .card a.title {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500;
+    color: var(--ink); text-decoration: none; line-height: 1.3; grid-column: 1;
+  }
+  .card a.title:hover { color: var(--accent); }
+  .card .src {
+    grid-column: 1; display: flex; flex-wrap: wrap; gap: 8px 16px;
+    font-size: 11px; color: var(--ink-faint); align-items: center; margin-top: 2px;
+  }
+  .card .src .fonte { color: var(--ink-soft); }
+  .tag {
+    grid-column: 2; grid-row: 1 / span 2; align-self: start;
+    background: var(--accent-soft); color: var(--accent); font-size: 10px;
+    padding: 5px 10px; border-radius: 99px; letter-spacing: 0.04em;
+    white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .state { text-align: center; padding: 80px 20px; color: var(--ink-faint); }
+  .state .big { font-family: 'Fraunces', serif; font-size: 22px; color: var(--ink-soft); margin-bottom: 8px; }
+
+  .spinner {
+    width: 28px; height: 28px; border: 3px solid var(--line);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin .8s linear infinite; margin: 0 auto 18px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer { margin-top: 40px; font-size: 11px; color: var(--ink-faint); text-align: center; }
+  footer a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Monitor automatizado · Labiia</div>
+    <h1>Notícias sobre <em>inteligência artificial</em> e governança</h1>
+    <p class="lede">Coleta automática de notícias por palavra-chave, atualizada a cada seis horas. Filtre por termo, fonte ou texto para acompanhar o que circula na imprensa.</p>
+    <div class="meta-bar">
+      <span><b id="stat-total">—</b> notícias no acervo</span>
+      <span><b id="stat-fontes">—</b> fontes</span>
+      <span><b id="stat-kw">—</b> palavras-chave</span>
+      <span>última coleta: <b id="stat-data">—</b></span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="q" placeholder="Buscar no título...">
+    </div>
+    <select id="filtro-kw"><option value="">Todas as palavras-chave</option></select>
+    <select id="filtro-fonte"><option value="">Todas as fontes</option></select>
+  </div>
+
+  <div class="count" id="count"></div>
+  <div id="lista">
+    <div class="state"><div class="spinner"></div>Carregando notícias do repositório...</div>
+  </div>
+
+  <footer>
+    Dados coletados via Google News RSS · atualização automática por GitHub Actions ·
+    <a href="#" id="link-csv">ver CSV bruto</a>
+  </footer>
+</div>
+
+<script>
+// ===== CONFIGURAR AQUI =====
+// usuario/repositorio e branch. Ajuste se mudar de repo.
+const USUARIO = "larissacodes";
+const REPO = "monitor-labiia";
+const BRANCH = "main";
+const CAMINHO_CSV = "dados/noticias.csv";
+// ===========================
+
+const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
+document.getElementById("link-csv").href = CSV_URL;
+
+let dados = [];
+
+function parseData(s) {
+  if (!s) return null;
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+function fmtData(s) {
+  const d = parseData(s);
+  if (!d) return s || "—";
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function render() {
+  const q = document.getElementById("q").value.toLowerCase().trim();
+  const fkw = document.getElementById("filtro-kw").value;
+  const ffonte = document.getElementById("filtro-fonte").value;
+
+  let filtrados = dados.filter(d => {
+    if (q && !(d.titulo || "").toLowerCase().includes(q)) return false;
+    if (fkw && d.keyword !== fkw) return false;
+    if (ffonte && d.fonte !== ffonte) return false;
+    return true;
+  });
+
+  filtrados.sort((a, b) => {
+    const da = parseData(a.data_pub), db = parseData(b.data_pub);
+    if (da && db) return db - da;
+    return 0;
+  });
+
+  document.getElementById("count").innerHTML =
+    `mostrando <b>${filtrados.length}</b> de ${dados.length} notícias`;
+
+  const lista = document.getElementById("lista");
+  if (filtrados.length === 0) {
+    lista.innerHTML = `<div class="state"><div class="big">Nada encontrado</div>Tente outro termo ou limpe os filtros.</div>`;
+    return;
+  }
+
+  lista.innerHTML = `<div class="cards">${filtrados.map(d => `
+    <div class="card">
+      <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo || "(sem título)"}</a>
+      <span class="tag">${d.keyword || ""}</span>
+      <div class="src">
+        <span class="fonte">${d.fonte || "fonte desconhecida"}</span>
+        <span>${fmtData(d.data_pub)}</span>
+      </div>
+    </div>`).join("")}</div>`;
+}
+
+function popularFiltros() {
+  const kws = [...new Set(dados.map(d => d.keyword).filter(Boolean))].sort();
+  const fontes = [...new Set(dados.map(d => d.fonte).filter(Boolean))].sort();
+  const selKw = document.getElementById("filtro-kw");
+  const selF = document.getElementById("filtro-fonte");
+  kws.forEach(k => selKw.insertAdjacentHTML("beforeend", `<option value="${k}">${k}</option>`));
+  fontes.forEach(f => selF.insertAdjacentHTML("beforeend", `<option value="${f}">${f}</option>`));
+
+  // estatísticas
+  document.getElementById("stat-total").textContent = dados.length;
+  document.getElementById("stat-fontes").textContent = fontes.length;
+  document.getElementById("stat-kw").textContent = kws.length;
+  const datas = dados.map(d => parseData(d.coletado_em)).filter(Boolean);
+  if (datas.length) {
+    const ultima = new Date(Math.max(...datas));
+    document.getElementById("stat-data").textContent =
+      ultima.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }) + ", " +
+      ultima.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  }
+}
+
+Papa.parse(CSV_URL, {
+  download: true,
+  header: true,
+  skipEmptyLines: true,
+  complete: (res) => {
+    dados = res.data.filter(r => r.link);
+    if (dados.length === 0) {
+      document.getElementById("lista").innerHTML =
+        `<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado. Confira USUARIO, REPO e BRANCH no código.</div>`;
+      return;
+    }
+    popularFiltros();
+    render();
+  },
+  error: () => {
+    document.getElementById("lista").innerHTML =
+      `<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e se o caminho dados/noticias.csv existe.</div>`;
+  }
+});
+
+["q", "filtro-kw", "filtro-fonte"].forEach(id =>
+  document.getElementById(id).addEventListener("input", render));
+</script>
+</body>
+</html>
