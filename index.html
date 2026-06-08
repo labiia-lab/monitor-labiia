@@ -19,20 +19,19 @@
   body { background: var(--branco); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; line-height: 1.55; }
   .hero { background: linear-gradient(135deg, #4945FE 0%, #2422a8 55%, #15151F 100%); color: var(--branco); padding: 60px 28px 68px; position: relative; overflow: hidden; }
   .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px); background-size: 40px 40px; -webkit-mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%); mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%); }
-  .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
+  .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; }
   .brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px; color: var(--branco); letter-spacing: -0.02em; margin-bottom: 40px; }
   .tagchip { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #ffffff18; border: 1px solid #ffffff30; color: #dcdbff; padding: 8px 16px; border-radius: 8px; margin-bottom: 22px; }
   h1 { font-weight: 600; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.12; letter-spacing: -0.01em; max-width: 18ch; }
   .lede { margin-top: 18px; color: #cdccf0; max-width: 560px; font-size: 15px; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1180px; margin: -34px auto 0; padding: 0 28px; position: relative; z-index: 2; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1280px; margin: -34px auto 0; padding: 0 28px; position: relative; z-index: 2; }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   .stat { background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; padding: 20px 22px; box-shadow: 0 12px 28px -18px #15151f40; }
   .stat .num { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--azul); line-height: 1; }
   .stat .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 7px; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 48px 28px 80px; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 48px 28px 80px; }
   .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--azul); background: #4945fe14; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 18px; }
 
-  /* nivel 1: eixos */
   .eixos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
   .eixo-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px 15px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 8px; }
   .eixo-chip .bola { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; background: var(--cor); }
@@ -40,7 +39,6 @@
   .eixo-chip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
   .eixo-chip.on .bola { background: var(--branco); }
 
-  /* nivel 2: keywords do eixo escolhido */
   .kw-painel { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; margin-bottom: 26px; background: var(--claro); display: none; }
   .kw-painel.ativo { display: block; }
   .kw-painel .titulo { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
@@ -63,6 +61,11 @@
   .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); }
   select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; }
   select:focus { border-color: var(--azul); }
+
+  /* layout duas colunas: noticias + estatisticas */
+  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+  @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+
   .count { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
   .count b { color: var(--azul); }
   .cards { display: flex; flex-direction: column; gap: 12px; }
@@ -77,6 +80,39 @@
   .card .tags { grid-column: 3; grid-row: 1 / span 3; align-self: start; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
   .tag-eixo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; color: var(--branco); white-space: nowrap; }
   .tag-kw { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+
+  /* painel de estatisticas */
+  .stats-side { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 18px; }
+  .box { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; }
+  .box h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 16px; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
+  .box h3::before { content: "//"; color: var(--azul); }
+
+  /* mini grafico de barras por semana */
+  .barras { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+  .barra-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .barra-val { width: 100%; background: var(--azul); border-radius: 4px 4px 0 0; min-height: 3px; transition: height .3s; position: relative; }
+  .barra-col:hover .barra-val { opacity: .8; }
+  .barra-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); }
+  .barra-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); white-space: nowrap; }
+
+  /* ranking por eixo */
+  .rank { display: flex; flex-direction: column; gap: 10px; }
+  .rank-item { font-size: 13px; }
+  .rank-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .rank-nome { display: flex; align-items: center; gap: 7px; color: var(--ink); }
+  .rank-nome .bola { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .rank-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+  .rank-bar { height: 5px; border-radius: 3px; background: var(--claro); overflow: hidden; }
+  .rank-fill { height: 100%; border-radius: 3px; }
+
+  /* top fontes */
+  .fontes-list { display: flex; flex-direction: column; gap: 9px; }
+  .fonte-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+  .fonte-nome { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fonte-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--azul); flex-shrink: 0; }
+
+  .box-vazio { font-size: 12px; color: var(--ink-soft); }
+
   .state { text-align: center; padding: 70px 20px; color: var(--ink-soft); }
   .state .big { font-size: 21px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
   .spinner { width: 28px; height: 28px; border: 3px solid var(--linha); border-top-color: var(--azul); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
@@ -91,7 +127,7 @@
     <div class="brand">&lt;labiia_lab&gt;</div>
     <div class="tagchip">&lt;monitor de notícias/&gt;</div>
     <h1>Inteligência artificial nos seis eixos de pesquisa do laboratório</h1>
-    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa e atualizada a cada seis horas. Escolha um eixo e refine pelas palavras-chave.</p>
+    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa e atualizada várias vezes ao dia. Escolha um eixo e refine pelas palavras-chave.</p>
   </div>
 </section>
 
@@ -124,8 +160,28 @@
     <select id="filtro-fonte"><option value="">Todas as fontes</option></select>
   </div>
 
-  <div class="count" id="count"></div>
-  <div id="lista"><div class="state"><div class="spinner"></div>Carregando notícias do repositório...</div></div>
+  <div class="layout">
+    <div>
+      <div class="count" id="count"></div>
+      <div id="lista"><div class="state"><div class="spinner"></div>Carregando notícias do repositório...</div></div>
+    </div>
+
+    <aside class="stats-side" id="stats-side">
+      <div class="box">
+        <h3>volume por semana</h3>
+        <div id="grafico-semanas"><div class="box-vazio">sem dados</div></div>
+      </div>
+      <div class="box">
+        <h3>notícias por eixo</h3>
+        <div class="rank" id="rank-eixos"><div class="box-vazio">sem dados</div></div>
+      </div>
+      <div class="box">
+        <h3>top fontes</h3>
+        <div class="fontes-list" id="top-fontes"><div class="box-vazio">sem dados</div></div>
+      </div>
+    </aside>
+  </div>
+
   <footer>dados via Google News RSS · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
 </div>
 
@@ -149,52 +205,133 @@ const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/
 document.getElementById("link-csv").href = CSV_URL;
 
 let dados = [];
-let eixoAtivo = null;          // qual eixo esta selecionado (so um por vez)
-let kwAtivas = new Set();      // keywords marcadas dentro do eixo ativo
+let eixoAtivo = null;
+let kwAtivas = new Set();
 const limpa = s => (s||"").replace(/"/g,'');
-// chave normalizada p/ parear chip <-> noticia sem depender de aspas/acentos
 const normKw = s => (s||"").replace(/"/g,'').trim().toLowerCase();
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
 function fmtData(s){ const d=parseData(s); if(!d) return s||"sem data"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
 
-function kwsDoEixo(eixo){
-  return [...new Set(dados.filter(d=>d.eixo===eixo).map(d=>d.keyword).filter(Boolean))].sort();
+// retorna o domingo (inicio) da semana de uma data, como chave AAAA-MM-DD
+function inicioSemana(d){
+  const x=new Date(d); x.setHours(0,0,0,0);
+  x.setDate(x.getDate()-x.getDay()); // volta pro domingo
+  return x;
 }
+function rotuloSemana(d){ return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}); }
 
-function render(){
+// aplica os filtros atuais e devolve a lista de noticias visiveis
+function filtrar(){
   const q=document.getElementById("q").value.toLowerCase().trim();
   const ffonte=document.getElementById("filtro-fonte").value;
-  const lista=document.getElementById("lista");
-
-  if(!eixoAtivo){
-    lista.innerHTML=`<div class="state"><div class="big">Escolha um eixo de pesquisa</div>Clique em um dos eixos acima para ver as notícias e suas palavras-chave.</div>`;
-    document.getElementById("count").innerHTML="";
-    return;
-  }
-
-  let filtrados=dados.filter(d=>{
+  if(!eixoAtivo) return [];
+  return dados.filter(d=>{
     if(d.eixo!==eixoAtivo) return false;
     if(!kwAtivas.has(normKw(d.keyword))) return false;
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     return true;
   });
+}
+
+function render(){
+  const lista=document.getElementById("lista");
+  if(!eixoAtivo){
+    lista.innerHTML=`<div class="state"><div class="big">Escolha um eixo de pesquisa</div>Clique em um dos eixos acima para ver as notícias e suas palavras-chave.</div>`;
+    document.getElementById("count").innerHTML="";
+    atualizarEstatisticas([]);
+    return;
+  }
+  let filtrados=filtrar();
   filtrados.sort((a,b)=>{ const da=parseData(a.data_pub),db=parseData(b.data_pub); if(da&&db) return db-da; return 0; });
 
   const totalEixo=dados.filter(d=>d.eixo===eixoAtivo).length;
   document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${totalEixo} notícias em ${eixoAtivo}`;
 
-  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Marque mais palavras-chave ou limpe a busca.</div>`; return; }
-  lista.innerHTML=`<div class="cards">${filtrados.map(d=>{
-    const c=corEixo(d.eixo);
-    return `<div class="card" style="--cor:${c}">
-      <div class="barra"></div>
-      <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
-      <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span></div>
-      <div class="tags"><span class="tag-eixo" style="background:${c}">${d.eixo||""}</span><span class="tag-kw">${limpa(d.keyword)}</span></div>
+  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Marque mais palavras-chave ou limpe a busca.</div>`; }
+  else {
+    lista.innerHTML=`<div class="cards">${filtrados.map(d=>{
+      const c=corEixo(d.eixo);
+      return `<div class="card" style="--cor:${c}">
+        <div class="barra"></div>
+        <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
+        <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span></div>
+        <div class="tags"><span class="tag-eixo" style="background:${c}">${d.eixo||""}</span><span class="tag-kw">${limpa(d.keyword)}</span></div>
+      </div>`;
+    }).join("")}</div>`;
+  }
+  atualizarEstatisticas(filtrados);
+}
+
+function atualizarEstatisticas(visiveis){
+  desenharSemanas(visiveis);
+  desenharRankEixos(visiveis);
+  desenharTopFontes(visiveis);
+}
+
+// 1) volume por semana (ultimas 6 semanas)
+function desenharSemanas(lista){
+  const cont=document.getElementById("grafico-semanas");
+  const comData=lista.filter(d=>parseData(d.data_pub));
+  if(comData.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
+  // monta as ultimas 6 semanas a partir de hoje
+  const hoje=new Date();
+  const semanas=[];
+  for(let i=5;i>=0;i--){
+    const ini=inicioSemana(hoje); ini.setDate(ini.getDate()-i*7);
+    semanas.push({ini, qtd:0});
+  }
+  comData.forEach(d=>{
+    const ini=inicioSemana(parseData(d.data_pub)).getTime();
+    const s=semanas.find(x=>x.ini.getTime()===ini);
+    if(s) s.qtd++;
+  });
+  const max=Math.max(...semanas.map(s=>s.qtd),1);
+  cont.innerHTML=`<div class="barras">${semanas.map(s=>{
+    const h=Math.round((s.qtd/max)*100);
+    return `<div class="barra-col" title="${s.qtd} notícias na semana de ${rotuloSemana(s.ini)}">
+      <span class="barra-num">${s.qtd}</span>
+      <div class="barra-val" style="height:${h}%"></div>
+      <span class="barra-lbl">${rotuloSemana(s.ini)}</span>
     </div>`;
   }).join("")}</div>`;
+}
+
+// 2) ranking por eixo (sempre sobre todo o acervo, p/ dar visao geral)
+function desenharRankEixos(){
+  const cont=document.getElementById("rank-eixos");
+  const ordem=Object.keys(CORES_EIXO);
+  const cont_eixo={};
+  dados.forEach(d=>{ if(d.eixo) cont_eixo[d.eixo]=(cont_eixo[d.eixo]||0)+1; });
+  const itens=ordem.filter(e=>cont_eixo[e]).map(e=>({eixo:e, qtd:cont_eixo[e]}));
+  if(itens.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
+  const max=Math.max(...itens.map(i=>i.qtd),1);
+  cont.innerHTML=itens.map(i=>{
+    const c=corEixo(i.eixo); const w=Math.round((i.qtd/max)*100);
+    return `<div class="rank-item">
+      <div class="rank-top">
+        <span class="rank-nome"><span class="bola" style="background:${c}"></span>${i.eixo}</span>
+        <span class="rank-qtd">${i.qtd}</span>
+      </div>
+      <div class="rank-bar"><div class="rank-fill" style="width:${w}%;background:${c}"></div></div>
+    </div>`;
+  }).join("");
+}
+
+// 3) top fontes (do recorte filtrado, ou geral se nada filtrado)
+function desenharTopFontes(visiveis){
+  const cont=document.getElementById("top-fontes");
+  const base=(visiveis && visiveis.length) ? visiveis : dados;
+  const cont_f={};
+  base.forEach(d=>{ const f=d.fonte||"desconhecida"; cont_f[f]=(cont_f[f]||0)+1; });
+  const itens=Object.entries(cont_f).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(itens.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
+  cont.innerHTML=itens.map(([f,q])=>`<div class="fonte-row"><span class="fonte-nome">${f}</span><span class="fonte-qtd">${q}</span></div>`).join("");
+}
+
+function kwsDoEixo(eixo){
+  return [...new Set(dados.filter(d=>d.eixo===eixo).map(d=>d.keyword).filter(Boolean))].sort();
 }
 
 function abrirEixo(eixo){
@@ -202,7 +339,7 @@ function abrirEixo(eixo){
   document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on", ch.dataset.eixo===eixo));
   const c=corEixo(eixo);
   const kws=kwsDoEixo(eixo);
-  kwAtivas=new Set(kws.map(normKw));   // todas as keywords do eixo comecam marcadas
+  kwAtivas=new Set(kws.map(normKw));
 
   const painel=document.getElementById("kw-painel");
   painel.classList.add("ativo");
@@ -256,7 +393,7 @@ function popular(){
   const datas=dados.map(d=>parseData(d.coletado_em)).filter(Boolean);
   if(datas.length){ const u=new Date(Math.max(...datas));
     document.getElementById("stat-data").textContent=u.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+", "+u.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
-  if(eixos.length) abrirEixo(eixos[0]);   // abre o primeiro eixo automaticamente
+  if(eixos.length) abrirEixo(eixos[0]);
 }
 
 Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
