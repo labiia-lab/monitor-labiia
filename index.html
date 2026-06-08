@@ -184,7 +184,7 @@ function popularFiltros(){
   const kws=[...new Set(dados.map(d=>d.keyword).filter(Boolean))].sort();
   const fontes=[...new Set(dados.map(d=>d.fonte).filter(Boolean))].sort();
   const selKw=document.getElementById("filtro-kw"), selF=document.getElementById("filtro-fonte");
-  kws.forEach(k=>selKw.insertAdjacentHTML("beforeend",`<option value="${k}">${k}</option>`));
+ kws.forEach(k=>selKw.insertAdjacentHTML("beforeend",`<option value="${k}">${k.replace(/"/g,'')}</option>`));
   fontes.forEach(f=>selF.insertAdjacentHTML("beforeend",`<option value="${f}">${f}</option>`));
   document.getElementById("stat-total").textContent=dados.length;
   document.getElementById("stat-fontes").textContent=fontes.length;
