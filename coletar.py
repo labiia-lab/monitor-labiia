@@ -3,50 +3,49 @@ from urllib.parse import quote
 import pandas as pd
 from datetime import datetime, timezone
 
-# Cada eixo de pesquisa tem sua lista de palavras-chave.
-# A chave do dicionário é o nome do eixo (igual ao manual de identidade).
+# Laboratório de IA: TODA palavra-chave cruza o tema do eixo com inteligência artificial.
 EIXOS = {
     "IA e Método": [
-        "inteligência artificial",
-        '"governança de IA"',
-        '"regulação" "inteligência artificial"',
+        '"inteligência artificial" pesquisa',
         '"IA generativa"',
-        '"soberania digital"',
+        '"modelos de linguagem"',
+        '"aprendizado de máquina" ciência',
+        '"métodos computacionais" "inteligência artificial"',
     ],
     "Eleições": [
-        '"desinformação" eleições',
-        '"fake news" eleição Brasil',
-        '"urna eletrônica"',
-        '"campanha eleitoral" redes sociais',
-        '"integridade eleitoral"',
+        '"inteligência artificial" eleições',
+        '"deepfake" eleição',
+        '"IA" desinformação eleitoral',
+        '"inteligência artificial" campanha política',
+        '"IA" integridade eleitoral',
     ],
     "Sustentabilidade": [
-        '"transição energética" Brasil',
-        '"mudança climática" política',
-        '"crédito de carbono"',
-        '"justiça climática"',
-        '"política ambiental" Brasil',
+        '"inteligência artificial" clima',
+        '"IA" sustentabilidade',
+        '"inteligência artificial" meio ambiente',
+        '"IA" transição energética',
+        '"inteligência artificial" monitoramento ambiental',
     ],
     "Democracia": [
-        '"democracia" Brasil instituições',
-        '"polarização política"',
-        '"participação social"',
-        '"estado de direito"',
-        '"liberdade de imprensa"',
+        '"inteligência artificial" democracia',
+        '"IA" esfera pública',
+        '"inteligência artificial" políticas públicas',
+        '"IA" participação cidadã',
+        '"inteligência artificial" transparência governo',
     ],
     "Ética e Regulação": [
         '"ética" "inteligência artificial"',
-        '"regulação de plataformas"',
-        '"proteção de dados" LGPD',
+        '"regulação" "inteligência artificial"',
+        '"governança de IA"',
         '"viés algorítmico"',
-        '"moderação de conteúdo"',
+        '"inteligência artificial" proteção de dados',
     ],
     "Sociedade e Cultura": [
-        '"inclusão digital"',
-        '"desigualdade digital"',
-        '"cultura digital"',
-        '"tecnologia e sociedade"',
-        '"letramento digital"',
+        '"inteligência artificial" sociedade',
+        '"IA" desigualdade',
+        '"inteligência artificial" trabalho',
+        '"IA" educação',
+        '"inteligência artificial" cultura',
     ],
 }
 
