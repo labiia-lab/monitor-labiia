@@ -152,6 +152,8 @@ let dados = [];
 let eixoAtivo = null;          // qual eixo esta selecionado (so um por vez)
 let kwAtivas = new Set();      // keywords marcadas dentro do eixo ativo
 const limpa = s => (s||"").replace(/"/g,'');
+// chave normalizada p/ parear chip <-> noticia sem depender de aspas/acentos
+const normKw = s => (s||"").replace(/"/g,'').trim().toLowerCase();
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
 function fmtData(s){ const d=parseData(s); if(!d) return s||"sem data"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
@@ -173,7 +175,7 @@ function render(){
 
   let filtrados=dados.filter(d=>{
     if(d.eixo!==eixoAtivo) return false;
-    if(!kwAtivas.has(d.keyword)) return false;
+    if(!kwAtivas.has(normKw(d.keyword))) return false;
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     return true;
@@ -200,7 +202,7 @@ function abrirEixo(eixo){
   document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on", ch.dataset.eixo===eixo));
   const c=corEixo(eixo);
   const kws=kwsDoEixo(eixo);
-  kwAtivas=new Set(kws);   // ao abrir um eixo, todas as keywords dele começam marcadas
+  kwAtivas=new Set(kws.map(normKw));   // todas as keywords do eixo comecam marcadas
 
   const painel=document.getElementById("kw-painel");
   painel.classList.add("ativo");
@@ -209,7 +211,7 @@ function abrirEixo(eixo){
   document.querySelector("#kw-titulo .bola").style.background=c;
 
   const cont=document.getElementById("kw-chips");
-  cont.innerHTML=kws.map(k=>`<span class="kwchip on" data-kw="${k}" style="--cor:${c}">${limpa(k)}</span>`).join("");
+  cont.innerHTML=kws.map(k=>`<span class="kwchip on" data-kw="${normKw(k)}" style="--cor:${c}">${limpa(k)}</span>`).join("");
   cont.querySelectorAll(".kwchip").forEach(chip=>{
     chip.addEventListener("click",()=>{
       const k=chip.dataset.kw;
