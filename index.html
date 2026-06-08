@@ -10,104 +10,69 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   :root {
-    --indigo: #5b4ce0;
-    --indigo-deep: #4339c4;
-    --hero-bg-1: #1e1b54;
-    --hero-bg-2: #15123d;
-    --ink: #1a1a2e;
-    --ink-soft: #5a5a73;
-    --ink-faint: #8b8ba3;
-    --line: #e7e7f0;
-    --surface: #ffffff;
-    --surface-2: #f5f4fb;
-    --chip-bg: #ece9fb;
-    --white: #ffffff;
+    --indigo: #5b4ce0; --indigo-deep: #4339c4;
+    --hero-bg-1: #1e1b54; --hero-bg-2: #15123d;
+    --ink: #1a1a2e; --ink-soft: #5a5a73; --ink-faint: #8b8ba3;
+    --line: #e7e7f0; --surface: #ffffff; --surface-2: #f5f4fb;
+    --chip-bg: #ece9fb; --white: #ffffff;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--surface); color: var(--ink);
-    font-family: 'Poppins', sans-serif; line-height: 1.5;
-  }
-  .hero {
-    background: linear-gradient(160deg, var(--hero-bg-1) 0%, var(--hero-bg-2) 100%);
-    color: var(--white); padding: 64px 28px 72px; position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: ""; position: absolute; inset: 0;
-    background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px);
-    background-size: 44px 44px;
-    -webkit-mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%);
-    mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%);
-  }
+  body { background: var(--surface); color: var(--ink); font-family: 'Poppins', sans-serif; line-height: 1.5; }
+  .hero { background: linear-gradient(160deg, var(--hero-bg-1) 0%, var(--hero-bg-2) 100%); color: var(--white); padding: 64px 28px 72px; position: relative; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px); background-size: 44px 44px; -webkit-mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%); mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%); }
   .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
-  .brand {
-    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px;
-    color: var(--white); letter-spacing: -0.02em; margin-bottom: 44px;
-  }
+  .brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px; color: var(--white); letter-spacing: -0.02em; margin-bottom: 44px; }
   .brand .br { color: #9b8fff; }
-  .tagchip {
-    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    background: #ffffff14; border: 1px solid #ffffff26; color: #c9c3ff;
-    padding: 8px 16px; border-radius: 8px; margin-bottom: 24px;
-  }
+  .tagchip { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #ffffff14; border: 1px solid #ffffff26; color: #c9c3ff; padding: 8px 16px; border-radius: 8px; margin-bottom: 24px; }
   h1 { font-weight: 700; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.08; letter-spacing: -0.02em; max-width: 14ch; }
   h1 .hl { color: #9b8fff; }
   .lede { margin-top: 20px; color: #c4c2e0; max-width: 540px; font-size: 15px; line-height: 1.6; }
-  .stats {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-    max-width: 1180px; margin: -36px auto 0; padding: 0 28px; position: relative; z-index: 2;
-  }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1180px; margin: -36px auto 0; padding: 0 28px; position: relative; z-index: 2; }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-  .stat {
-    background: var(--white); border: 1px solid var(--line); border-radius: 16px;
-    padding: 22px 24px; box-shadow: 0 12px 30px -16px #1a1a4b30;
-  }
+  .stat { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; box-shadow: 0 12px 30px -16px #1a1a4b30; }
   .stat .num { font-size: 34px; font-weight: 700; color: var(--indigo); line-height: 1; letter-spacing: -0.02em; }
   .stat .lbl { font-size: 12px; color: var(--ink-faint); margin-top: 8px; }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 52px 28px 80px; }
-  .section-tag {
-    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--indigo);
-    background: var(--chip-bg); padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 20px;
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--indigo); background: var(--chip-bg); padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 20px; }
+
+  .kw-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .kw-head .lbl { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+  .kw-actions { display: flex; gap: 8px; }
+  .kw-actions button { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--line); color: var(--ink-soft); padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all .15s; }
+  .kw-actions button:hover { border-color: var(--indigo); color: var(--indigo); }
+  .kw-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 26px; }
+  .kwchip {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 14px; border-radius: 99px;
+    border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-soft);
+    cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 7px;
   }
-  .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; margin-bottom: 22px; align-items: center; }
+  .kwchip:hover { border-color: #cfc9f7; }
+  .kwchip .check { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid var(--ink-faint); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+  .kwchip.on { background: var(--indigo); border-color: var(--indigo); color: var(--white); }
+  .kwchip.on .check { background: var(--white); border-color: var(--white); }
+  .kwchip.on .check svg { display: block; }
+  .kwchip .check svg { display: none; }
+
+  .controls { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin-bottom: 22px; align-items: center; }
   @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } }
   .search { position: relative; }
-  .search input {
-    width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
-    padding: 14px 16px 14px 44px; border-radius: 12px; font-family: inherit; font-size: 14px;
-    outline: none; transition: border-color .2s, box-shadow .2s;
-  }
+  .search input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); padding: 14px 16px 14px 44px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s, box-shadow .2s; }
   .search input:focus { border-color: var(--indigo); box-shadow: 0 0 0 3px #5b4ce022; }
   .search input::placeholder { color: var(--ink-faint); }
   .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); }
-  select {
-    background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
-    padding: 14px 16px; border-radius: 12px; font-family: inherit; font-size: 13px;
-    outline: none; cursor: pointer; min-width: 190px; transition: border-color .2s;
-  }
+  select { background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); padding: 14px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; transition: border-color .2s; }
   select:focus { border-color: var(--indigo); }
   .count { font-size: 13px; color: var(--ink-faint); margin-bottom: 18px; }
   .count b { color: var(--indigo); font-weight: 600; }
   .cards { display: flex; flex-direction: column; gap: 14px; }
-  .card {
-    background: var(--white); border: 1px solid var(--line); border-radius: 16px;
-    padding: 22px 26px; display: grid; grid-template-columns: 1fr auto; gap: 8px 20px;
-    transition: border-color .18s, box-shadow .18s, transform .18s;
-  }
+  .card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 22px 26px; display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; transition: border-color .18s, box-shadow .18s, transform .18s; }
   .card:hover { border-color: #cfc9f7; box-shadow: 0 14px 32px -20px #1a1a4b40; transform: translateY(-2px); }
-  .card a.title {
-    font-size: 18px; font-weight: 600; color: var(--ink); text-decoration: none;
-    line-height: 1.32; grid-column: 1; letter-spacing: -0.01em;
-  }
+  .card a.title { font-size: 18px; font-weight: 600; color: var(--ink); text-decoration: none; line-height: 1.32; grid-column: 1; letter-spacing: -0.01em; }
   .card a.title:hover { color: var(--indigo); }
   .card .src { grid-column: 1; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px; color: var(--ink-faint); align-items: center; margin-top: 2px; }
   .card .src .fonte { color: var(--ink-soft); font-weight: 500; }
   .card .src .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-faint); }
-  .tag {
-    grid-column: 2; grid-row: 1 / span 2; align-self: start; font-family: 'JetBrains Mono', monospace;
-    background: var(--chip-bg); color: var(--indigo-deep); font-size: 11px; padding: 6px 12px;
-    border-radius: 99px; white-space: nowrap; max-width: 210px; overflow: hidden; text-overflow: ellipsis;
-  }
+  .tag { grid-column: 2; grid-row: 1 / span 2; align-self: start; font-family: 'JetBrains Mono', monospace; background: var(--chip-bg); color: var(--indigo-deep); font-size: 11px; padding: 6px 12px; border-radius: 99px; white-space: nowrap; max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
   .state { text-align: center; padding: 80px 20px; color: var(--ink-faint); }
   .state .big { font-size: 22px; font-weight: 600; color: var(--ink-soft); margin-bottom: 8px; }
   .spinner { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--indigo); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
@@ -122,7 +87,7 @@
     <div class="brand">&lt;labiia<span class="br">_</span>lab&gt;</div>
     <div class="tagchip">&lt;monitor de notícias - labiia lab/&gt;</div>
     <h1>O que a imprensa diz sobre <span class="hl">inteligência artificial</span></h1>
-    <p class="lede">Coleta automática de notícias por palavra-chave, atualizada a cada seis horas. Filtre por termo, fonte ou texto para acompanhar o debate público sobre IA, hubs de inovação e governança.</p>
+    <p class="lede">Coleta automática de notícias por palavra-chave, atualizada a cada seis horas. Marque os termos que quiser acompanhar e combine com busca por texto e fonte.</p>
   </div>
 </section>
 
@@ -134,15 +99,24 @@
 </div>
 
 <div class="wrap">
-  <div class="section-tag">&lt;notícias/&gt;</div>
+  <div class="section-tag">&lt;palavras-chave/&gt;</div>
+  <div class="kw-head">
+    <span class="lbl">Marque os termos que deseja ver (mostra notícias de qualquer um dos marcados)</span>
+    <div class="kw-actions">
+      <button id="btn-todas">marcar todas</button>
+      <button id="btn-nenhuma">limpar</button>
+    </div>
+  </div>
+  <div class="kw-chips" id="kw-chips"></div>
+
   <div class="controls">
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" id="q" placeholder="Buscar no título...">
     </div>
-    <select id="filtro-kw"><option value="">Todas as palavras-chave</option></select>
     <select id="filtro-fonte"><option value="">Todas as fontes</option></select>
   </div>
+
   <div class="count" id="count"></div>
   <div id="lista"><div class="state"><div class="spinner"></div>Carregando notícias do repositório...</div></div>
   <footer>dados via Google News RSS · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
@@ -156,35 +130,64 @@ const CAMINHO_CSV = "dados/noticias.csv";
 
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
+
 let dados = [];
+let kwAtivas = new Set();   // keywords marcadas (valor real, com aspas)
+const limpa = s => (s||"").replace(/"/g,'');
+
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
 function fmtData(s){ const d=parseData(s); if(!d) return s||"—"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
+
 function render(){
   const q=document.getElementById("q").value.toLowerCase().trim();
-  const fkw=document.getElementById("filtro-kw").value;
   const ffonte=document.getElementById("filtro-fonte").value;
   let filtrados=dados.filter(d=>{
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
-    if(fkw && d.keyword!==fkw) return false;
+    if(!kwAtivas.has(d.keyword)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     return true;
   });
   filtrados.sort((a,b)=>{ const da=parseData(a.data_pub),db=parseData(b.data_pub); if(da&&db) return db-da; return 0; });
   document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${dados.length} notícias`;
   const lista=document.getElementById("lista");
-  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Tente outro termo ou limpe os filtros.</div>`; return; }
+  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Tente outro termo, marque mais palavras-chave ou limpe a busca.</div>`; return; }
   lista.innerHTML=`<div class="cards">${filtrados.map(d=>`
     <div class="card">
       <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
-      <span class="tag">${d.keyword||""}</span>
+      <span class="tag">${limpa(d.keyword)}</span>
       <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span></div>
     </div>`).join("")}</div>`;
 }
+
+function montarChips(kws){
+  const cont=document.getElementById("kw-chips");
+  const tick=`<span class="check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#5b4ce0" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>`;
+  cont.innerHTML=kws.map(k=>`<span class="kwchip on" data-kw="${k}">${tick}${limpa(k)}</span>`).join("");
+  cont.querySelectorAll(".kwchip").forEach(chip=>{
+    chip.addEventListener("click",()=>{
+      const k=chip.dataset.kw;
+      if(kwAtivas.has(k)){ kwAtivas.delete(k); chip.classList.remove("on"); }
+      else { kwAtivas.add(k); chip.classList.add("on"); }
+      render();
+    });
+  });
+}
+
+function setTodas(ligar){
+  document.querySelectorAll(".kwchip").forEach(chip=>{
+    const k=chip.dataset.kw;
+    if(ligar){ kwAtivas.add(k); chip.classList.add("on"); }
+    else { kwAtivas.delete(k); chip.classList.remove("on"); }
+  });
+  render();
+}
+
 function popularFiltros(){
   const kws=[...new Set(dados.map(d=>d.keyword).filter(Boolean))].sort();
   const fontes=[...new Set(dados.map(d=>d.fonte).filter(Boolean))].sort();
-  const selKw=document.getElementById("filtro-kw"), selF=document.getElementById("filtro-fonte");
- kws.forEach(k=>selKw.insertAdjacentHTML("beforeend",`<option value="${k}">${k.replace(/"/g,'')}</option>`));
+  kwAtivas=new Set(kws);            // começa tudo marcado
+  montarChips(kws);
+  const selF=document.getElementById("filtro-fonte");
   fontes.forEach(f=>selF.insertAdjacentHTML("beforeend",`<option value="${f}">${f}</option>`));
   document.getElementById("stat-total").textContent=dados.length;
   document.getElementById("stat-fontes").textContent=fontes.length;
@@ -193,13 +196,17 @@ function popularFiltros(){
   if(datas.length){ const ultima=new Date(Math.max(...datas));
     document.getElementById("stat-data").textContent=ultima.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+", "+ultima.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
 }
+
+document.getElementById("btn-todas").addEventListener("click",()=>setTodas(true));
+document.getElementById("btn-nenhuma").addEventListener("click",()=>setTodas(false));
+
 Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
   complete:(res)=>{ dados=res.data.filter(r=>r.link);
     if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado. Confira USUARIO, REPO e BRANCH no código.</div>`; return; }
     popularFiltros(); render(); },
   error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e se o caminho dados/noticias.csv existe.</div>`; }
 });
-["q","filtro-kw","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 </script>
 </body>
 </html>
