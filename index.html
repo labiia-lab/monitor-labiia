@@ -11,87 +11,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   :root {
-    /* azul institucional da marca */
-    --azul: #4945FE;
-    /* neutros do manual */
-    --grafite: #15151F;
-    --cinza: #6B6B78;
-    --linha: #E4E4EA;
-    --claro: #F5F5F7;
-    --branco: #FFFFFF;
-    --ink: #15151F;
-    --ink-soft: #6B6B78;
+    --azul: #4945FE; --grafite: #15151F; --cinza: #6B6B78;
+    --linha: #E4E4EA; --claro: #F5F5F7; --branco: #FFFFFF;
+    --ink: #15151F; --ink-soft: #6B6B78;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--branco); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; line-height: 1.55; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
-
-  /* ===== HERO (fundo escuro, logo branca, conforme manual) ===== */
-  .hero {
-    background: linear-gradient(135deg, #4945FE 0%, #2422a8 55%, #15151F 100%);
-    color: var(--branco); padding: 60px 28px 68px; position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: ""; position: absolute; inset: 0;
-    background-image: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px);
-    background-size: 40px 40px;
-    -webkit-mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%);
-    mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%);
-  }
+  .hero { background: linear-gradient(135deg, #4945FE 0%, #2422a8 55%, #15151F 100%); color: var(--branco); padding: 60px 28px 68px; position: relative; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px); background-size: 40px 40px; -webkit-mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%); mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%); }
   .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
-  .brand {
-    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px;
-    color: var(--branco); letter-spacing: -0.02em; margin-bottom: 40px;
-  }
-  .tagchip {
-    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    background: #ffffff18; border: 1px solid #ffffff30; color: #dcdbff;
-    padding: 8px 16px; border-radius: 8px; margin-bottom: 22px;
-  }
+  .brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px; color: var(--branco); letter-spacing: -0.02em; margin-bottom: 40px; }
+  .tagchip { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #ffffff18; border: 1px solid #ffffff30; color: #dcdbff; padding: 8px 16px; border-radius: 8px; margin-bottom: 22px; }
   h1 { font-weight: 600; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.12; letter-spacing: -0.01em; max-width: 18ch; }
-  .lede { margin-top: 18px; color: color: #cdccf0; max-width: 560px; font-size: 15px; }
-
-  /* ===== STATS ===== */
+  .lede { margin-top: 18px; color: #cdccf0; max-width: 560px; font-size: 15px; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1180px; margin: -34px auto 0; padding: 0 28px; position: relative; z-index: 2; }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   .stat { background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; padding: 20px 22px; box-shadow: 0 12px 28px -18px #15151f40; }
   .stat .num { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--azul); line-height: 1; }
   .stat .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 7px; }
-
   .wrap { max-width: 1180px; margin: 0 auto; padding: 48px 28px 80px; }
   .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--azul); background: #4945fe14; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 18px; }
 
-  /* ===== EIXOS ===== */
-  .eixos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
-  .eixo-chip {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px 15px; border-radius: 99px;
-    border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft);
-    cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 8px;
-  }
-  .eixo-chip .bola { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  /* nivel 1: eixos */
+  .eixos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+  .eixo-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px 15px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 8px; }
+  .eixo-chip .bola { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; background: var(--cor); }
   .eixo-chip:hover { border-color: var(--cor); }
   .eixo-chip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
   .eixo-chip.on .bola { background: var(--branco); }
 
-  .kw-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
-  .kw-head .lbl { font-size: 13px; color: var(--ink-soft); }
-  .kw-actions { display: flex; gap: 8px; }
-  .kw-actions button { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all .15s; }
-  .kw-actions button:hover { border-color: var(--azul); color: var(--azul); }
+  /* nivel 2: keywords do eixo escolhido */
+  .kw-painel { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; margin-bottom: 26px; background: var(--claro); display: none; }
+  .kw-painel.ativo { display: block; }
+  .kw-painel .titulo { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .kw-painel .titulo .bola { width: 12px; height: 12px; border-radius: 50%; }
+  .kw-painel .sub { font-size: 12px; color: var(--ink-soft); margin-bottom: 14px; }
+  .kw-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .kwchip { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 7px 13px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; }
+  .kwchip:hover { border-color: var(--cor); }
+  .kwchip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
+  .kw-mini-actions { margin-top: 12px; display: flex; gap: 8px; }
+  .kw-mini-actions button { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 4px 11px; border-radius: 7px; cursor: pointer; }
+  .kw-mini-actions button:hover { border-color: var(--azul); color: var(--azul); }
 
   .controls { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin-bottom: 22px; align-items: center; }
   @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } }
   .search { position: relative; }
-  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px 13px 44px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s; }
+  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px 13px 44px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; }
   .search input:focus { border-color: var(--azul); }
   .search input::placeholder { color: var(--ink-soft); }
   .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); }
   select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; }
   select:focus { border-color: var(--azul); }
-
   .count { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
   .count b { color: var(--azul); }
-
   .cards { display: flex; flex-direction: column; gap: 12px; }
   .card { background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; padding: 20px 24px; display: grid; grid-template-columns: 4px 1fr auto; gap: 4px 18px; transition: box-shadow .18s, transform .18s; }
   .card:hover { box-shadow: 0 14px 30px -20px #15151f50; transform: translateY(-2px); }
@@ -103,8 +76,7 @@
   .card .src .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-soft); }
   .card .tags { grid-column: 3; grid-row: 1 / span 3; align-self: start; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
   .tag-eixo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; color: var(--branco); white-space: nowrap; }
-  .tag-kw { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
-
+  .tag-kw { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
   .state { text-align: center; padding: 70px 20px; color: var(--ink-soft); }
   .state .big { font-size: 21px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
   .spinner { width: 28px; height: 28px; border: 3px solid var(--linha); border-top-color: var(--azul); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
@@ -118,8 +90,8 @@
   <div class="hero-inner">
     <div class="brand">&lt;labiia_lab&gt;</div>
     <div class="tagchip">&lt;monitor de notícias/&gt;</div>
-    <h1>O que a imprensa diz sobre os eixos de pesquisa do laboratório</h1>
-    <p class="lede">Coleta automática de notícias por palavra-chave, organizada pelos seis eixos de pesquisa e atualizada a cada seis horas.</p>
+    <h1>Inteligência artificial nos seis eixos de pesquisa do laboratório</h1>
+    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa e atualizada a cada seis horas. Escolha um eixo e refine pelas palavras-chave.</p>
   </div>
 </section>
 
@@ -132,14 +104,17 @@
 
 <div class="wrap">
   <div class="section-tag">&lt;eixos de pesquisa/&gt;</div>
-  <div class="kw-head">
-    <span class="lbl">Marque os eixos que deseja acompanhar</span>
-    <div class="kw-actions">
-      <button id="btn-todas">marcar todos</button>
-      <button id="btn-nenhuma">limpar</button>
+  <div class="eixos" id="eixos"></div>
+
+  <div class="kw-painel" id="kw-painel">
+    <div class="titulo" id="kw-titulo"><span class="bola"></span><span id="kw-titulo-txt"></span></div>
+    <div class="sub">Marque as palavras-chave deste eixo (mostra notícias de qualquer uma das marcadas)</div>
+    <div class="kw-chips" id="kw-chips"></div>
+    <div class="kw-mini-actions">
+      <button id="kw-todas">marcar todas</button>
+      <button id="kw-nenhuma">limpar</button>
     </div>
   </div>
-  <div class="eixos" id="eixos"></div>
 
   <div class="controls">
     <div class="search">
@@ -160,7 +135,6 @@ const REPO = "monitor-labiia";
 const BRANCH = "main";
 const CAMINHO_CSV = "dados/noticias.csv";
 
-// cores oficiais por eixo (manual de identidade, pág. 16)
 const CORES_EIXO = {
   "IA e Método": "#4945FE",
   "Eleições": "#DF3332",
@@ -175,70 +149,102 @@ const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/
 document.getElementById("link-csv").href = CSV_URL;
 
 let dados = [];
-let eixosAtivos = new Set();
+let eixoAtivo = null;          // qual eixo esta selecionado (so um por vez)
+let kwAtivas = new Set();      // keywords marcadas dentro do eixo ativo
 const limpa = s => (s||"").replace(/"/g,'');
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
 function fmtData(s){ const d=parseData(s); if(!d) return s||"sem data"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
 
+function kwsDoEixo(eixo){
+  return [...new Set(dados.filter(d=>d.eixo===eixo).map(d=>d.keyword).filter(Boolean))].sort();
+}
+
 function render(){
   const q=document.getElementById("q").value.toLowerCase().trim();
   const ffonte=document.getElementById("filtro-fonte").value;
+  const lista=document.getElementById("lista");
+
+  if(!eixoAtivo){
+    lista.innerHTML=`<div class="state"><div class="big">Escolha um eixo de pesquisa</div>Clique em um dos eixos acima para ver as notícias e suas palavras-chave.</div>`;
+    document.getElementById("count").innerHTML="";
+    return;
+  }
+
   let filtrados=dados.filter(d=>{
+    if(d.eixo!==eixoAtivo) return false;
+    if(!kwAtivas.has(d.keyword)) return false;
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
-    if(!eixosAtivos.has(d.eixo)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     return true;
   });
   filtrados.sort((a,b)=>{ const da=parseData(a.data_pub),db=parseData(b.data_pub); if(da&&db) return db-da; return 0; });
-  document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${dados.length} notícias`;
-  const lista=document.getElementById("lista");
-  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Marque mais eixos ou limpe a busca.</div>`; return; }
+
+  const totalEixo=dados.filter(d=>d.eixo===eixoAtivo).length;
+  document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${totalEixo} notícias em ${eixoAtivo}`;
+
+  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Marque mais palavras-chave ou limpe a busca.</div>`; return; }
   lista.innerHTML=`<div class="cards">${filtrados.map(d=>{
     const c=corEixo(d.eixo);
     return `<div class="card" style="--cor:${c}">
       <div class="barra"></div>
       <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
       <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span></div>
-      <div class="tags">
-        <span class="tag-eixo" style="background:${c}">${d.eixo||""}</span>
-        <span class="tag-kw">${limpa(d.keyword)}</span>
-      </div>
+      <div class="tags"><span class="tag-eixo" style="background:${c}">${d.eixo||""}</span><span class="tag-kw">${limpa(d.keyword)}</span></div>
     </div>`;
   }).join("")}</div>`;
+}
+
+function abrirEixo(eixo){
+  eixoAtivo=eixo;
+  document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on", ch.dataset.eixo===eixo));
+  const c=corEixo(eixo);
+  const kws=kwsDoEixo(eixo);
+  kwAtivas=new Set(kws);   // ao abrir um eixo, todas as keywords dele começam marcadas
+
+  const painel=document.getElementById("kw-painel");
+  painel.classList.add("ativo");
+  painel.style.setProperty("--cor", c);
+  document.getElementById("kw-titulo-txt").textContent=eixo;
+  document.querySelector("#kw-titulo .bola").style.background=c;
+
+  const cont=document.getElementById("kw-chips");
+  cont.innerHTML=kws.map(k=>`<span class="kwchip on" data-kw="${k}" style="--cor:${c}">${limpa(k)}</span>`).join("");
+  cont.querySelectorAll(".kwchip").forEach(chip=>{
+    chip.addEventListener("click",()=>{
+      const k=chip.dataset.kw;
+      if(kwAtivas.has(k)){ kwAtivas.delete(k); chip.classList.remove("on"); }
+      else { kwAtivas.add(k); chip.classList.add("on"); }
+      render();
+    });
+  });
+  render();
 }
 
 function montarEixos(eixos){
   const cont=document.getElementById("eixos");
   cont.innerHTML=eixos.map(e=>{
     const c=corEixo(e);
-    return `<span class="eixo-chip on" data-eixo="${e}" style="--cor:${c}"><span class="bola" style="background:${c}"></span>${e}</span>`;
+    return `<span class="eixo-chip" data-eixo="${e}" style="--cor:${c}"><span class="bola"></span>${e}</span>`;
   }).join("");
   cont.querySelectorAll(".eixo-chip").forEach(chip=>{
-    chip.addEventListener("click",()=>{
-      const e=chip.dataset.eixo;
-      if(eixosAtivos.has(e)){ eixosAtivos.delete(e); chip.classList.remove("on"); }
-      else { eixosAtivos.add(e); chip.classList.add("on"); }
-      render();
-    });
+    chip.addEventListener("click",()=>abrirEixo(chip.dataset.eixo));
   });
 }
 
-function setTodos(ligar){
-  document.querySelectorAll(".eixo-chip").forEach(chip=>{
-    const e=chip.dataset.eixo;
-    if(ligar){ eixosAtivos.add(e); chip.classList.add("on"); }
-    else { eixosAtivos.delete(e); chip.classList.remove("on"); }
-  });
+document.getElementById("kw-todas").addEventListener("click",()=>{
+  document.querySelectorAll(".kwchip").forEach(ch=>{ kwAtivas.add(ch.dataset.kw); ch.classList.add("on"); });
   render();
-}
+});
+document.getElementById("kw-nenhuma").addEventListener("click",()=>{
+  document.querySelectorAll(".kwchip").forEach(ch=>{ kwAtivas.delete(ch.dataset.kw); ch.classList.remove("on"); });
+  render();
+});
 
 function popular(){
-  // ordena eixos pela ordem do manual
   const ordem=Object.keys(CORES_EIXO);
   const eixos=[...new Set(dados.map(d=>d.eixo).filter(Boolean))].sort((a,b)=>ordem.indexOf(a)-ordem.indexOf(b));
   const fontes=[...new Set(dados.map(d=>d.fonte).filter(Boolean))].sort();
-  eixosAtivos=new Set(eixos);
   montarEixos(eixos);
   const selF=document.getElementById("filtro-fonte");
   fontes.forEach(f=>selF.insertAdjacentHTML("beforeend",`<option value="${f}">${f}</option>`));
@@ -248,15 +254,13 @@ function popular(){
   const datas=dados.map(d=>parseData(d.coletado_em)).filter(Boolean);
   if(datas.length){ const u=new Date(Math.max(...datas));
     document.getElementById("stat-data").textContent=u.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+", "+u.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
+  if(eixos.length) abrirEixo(eixos[0]);   // abre o primeiro eixo automaticamente
 }
-
-document.getElementById("btn-todas").addEventListener("click",()=>setTodos(true));
-document.getElementById("btn-nenhuma").addEventListener("click",()=>setTodos(false));
 
 Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
   complete:(res)=>{ dados=res.data.filter(r=>r.link);
     if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado.</div>`; return; }
-    popular(); render(); },
+    popular(); },
   error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e o caminho dados/noticias.csv.</div>`; }
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
