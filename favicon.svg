@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#4945FE"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- colchete esquerdo < -->
+    <polyline points="20,24 13,32 20,40"/>
+    <!-- colchete direito > -->
+    <polyline points="44,24 51,32 44,40"/>
+  </g>
+  <!-- letra l central -->
+  <path d="M30 21 L30 38 Q30 41 33 41 L36 41" fill="none" stroke="#FFFFFF"
+        stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

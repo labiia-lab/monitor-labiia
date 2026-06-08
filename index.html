@@ -4,110 +4,142 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>monitor de notícias - &lt;labiia_lab&gt;</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   :root {
-    --indigo: #5b4ce0; --indigo-deep: #4339c4;
-    --hero-bg-1: #1e1b54; --hero-bg-2: #15123d;
-    --ink: #1a1a2e; --ink-soft: #5a5a73; --ink-faint: #8b8ba3;
-    --line: #e7e7f0; --surface: #ffffff; --surface-2: #f5f4fb;
-    --chip-bg: #ece9fb; --white: #ffffff;
+    /* azul institucional da marca */
+    --azul: #4945FE;
+    /* neutros do manual */
+    --grafite: #15151F;
+    --cinza: #6B6B78;
+    --linha: #E4E4EA;
+    --claro: #F5F5F7;
+    --branco: #FFFFFF;
+    --ink: #15151F;
+    --ink-soft: #6B6B78;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--surface); color: var(--ink); font-family: 'Poppins', sans-serif; line-height: 1.5; }
-  .hero { background: linear-gradient(160deg, var(--hero-bg-1) 0%, var(--hero-bg-2) 100%); color: var(--white); padding: 64px 28px 72px; position: relative; overflow: hidden; }
-  .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px); background-size: 44px 44px; -webkit-mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%); mask-image: radial-gradient(circle at 70% 30%, #000 0%, transparent 70%); }
-  .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
-  .brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px; color: var(--white); letter-spacing: -0.02em; margin-bottom: 44px; }
-  .brand .br { color: #9b8fff; }
-  .tagchip { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #ffffff14; border: 1px solid #ffffff26; color: #c9c3ff; padding: 8px 16px; border-radius: 8px; margin-bottom: 24px; }
-  h1 { font-weight: 700; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.08; letter-spacing: -0.02em; max-width: 14ch; }
-  h1 .hl { color: #9b8fff; }
-  .lede { margin-top: 20px; color: #c4c2e0; max-width: 540px; font-size: 15px; line-height: 1.6; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1180px; margin: -36px auto 0; padding: 0 28px; position: relative; z-index: 2; }
-  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-  .stat { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; box-shadow: 0 12px 30px -16px #1a1a4b30; }
-  .stat .num { font-size: 34px; font-weight: 700; color: var(--indigo); line-height: 1; letter-spacing: -0.02em; }
-  .stat .lbl { font-size: 12px; color: var(--ink-faint); margin-top: 8px; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 52px 28px 80px; }
-  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--indigo); background: var(--chip-bg); padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 20px; }
+  body { background: var(--branco); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; line-height: 1.55; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
 
-  .kw-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-  .kw-head .lbl { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
-  .kw-actions { display: flex; gap: 8px; }
-  .kw-actions button { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--line); color: var(--ink-soft); padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all .15s; }
-  .kw-actions button:hover { border-color: var(--indigo); color: var(--indigo); }
-  .kw-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 26px; }
-  .kwchip {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 14px; border-radius: 99px;
-    border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-soft);
-    cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 7px;
+  /* ===== HERO (fundo escuro, logo branca, conforme manual) ===== */
+  .hero {
+    background: linear-gradient(135deg, #4945FE 0%, #2422a8 55%, #15151F 100%);
+    color: var(--branco); padding: 60px 28px 68px; position: relative; overflow: hidden;
   }
-  .kwchip:hover { border-color: #cfc9f7; }
-  .kwchip .check { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid var(--ink-faint); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
-  .kwchip.on { background: var(--indigo); border-color: var(--indigo); color: var(--white); }
-  .kwchip.on .check { background: var(--white); border-color: var(--white); }
-  .kwchip.on .check svg { display: block; }
-  .kwchip .check svg { display: none; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%);
+    mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%);
+  }
+  .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
+  .brand {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px;
+    color: var(--branco); letter-spacing: -0.02em; margin-bottom: 40px;
+  }
+  .tagchip {
+    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    background: #ffffff18; border: 1px solid #ffffff30; color: #dcdbff;
+    padding: 8px 16px; border-radius: 8px; margin-bottom: 22px;
+  }
+  h1 { font-weight: 600; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.12; letter-spacing: -0.01em; max-width: 18ch; }
+  .lede { margin-top: 18px; color: color: #cdccf0; max-width: 560px; font-size: 15px; }
+
+  /* ===== STATS ===== */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1180px; margin: -34px auto 0; padding: 0 28px; position: relative; z-index: 2; }
+  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; padding: 20px 22px; box-shadow: 0 12px 28px -18px #15151f40; }
+  .stat .num { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--azul); line-height: 1; }
+  .stat .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 7px; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 48px 28px 80px; }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--azul); background: #4945fe14; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 18px; }
+
+  /* ===== EIXOS ===== */
+  .eixos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+  .eixo-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px 15px; border-radius: 99px;
+    border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft);
+    cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eixo-chip .bola { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .eixo-chip:hover { border-color: var(--cor); }
+  .eixo-chip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
+  .eixo-chip.on .bola { background: var(--branco); }
+
+  .kw-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .kw-head .lbl { font-size: 13px; color: var(--ink-soft); }
+  .kw-actions { display: flex; gap: 8px; }
+  .kw-actions button { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all .15s; }
+  .kw-actions button:hover { border-color: var(--azul); color: var(--azul); }
 
   .controls { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin-bottom: 22px; align-items: center; }
   @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } }
   .search { position: relative; }
-  .search input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); padding: 14px 16px 14px 44px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s, box-shadow .2s; }
-  .search input:focus { border-color: var(--indigo); box-shadow: 0 0 0 3px #5b4ce022; }
-  .search input::placeholder { color: var(--ink-faint); }
-  .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); }
-  select { background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); padding: 14px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; transition: border-color .2s; }
-  select:focus { border-color: var(--indigo); }
-  .count { font-size: 13px; color: var(--ink-faint); margin-bottom: 18px; }
-  .count b { color: var(--indigo); font-weight: 600; }
-  .cards { display: flex; flex-direction: column; gap: 14px; }
-  .card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 22px 26px; display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; transition: border-color .18s, box-shadow .18s, transform .18s; }
-  .card:hover { border-color: #cfc9f7; box-shadow: 0 14px 32px -20px #1a1a4b40; transform: translateY(-2px); }
-  .card a.title { font-size: 18px; font-weight: 600; color: var(--ink); text-decoration: none; line-height: 1.32; grid-column: 1; letter-spacing: -0.01em; }
-  .card a.title:hover { color: var(--indigo); }
-  .card .src { grid-column: 1; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px; color: var(--ink-faint); align-items: center; margin-top: 2px; }
-  .card .src .fonte { color: var(--ink-soft); font-weight: 500; }
-  .card .src .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-faint); }
-  .tag { grid-column: 2; grid-row: 1 / span 2; align-self: start; font-family: 'JetBrains Mono', monospace; background: var(--chip-bg); color: var(--indigo-deep); font-size: 11px; padding: 6px 12px; border-radius: 99px; white-space: nowrap; max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
-  .state { text-align: center; padding: 80px 20px; color: var(--ink-faint); }
-  .state .big { font-size: 22px; font-weight: 600; color: var(--ink-soft); margin-bottom: 8px; }
-  .spinner { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--indigo); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
+  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px 13px 44px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s; }
+  .search input:focus { border-color: var(--azul); }
+  .search input::placeholder { color: var(--ink-soft); }
+  .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); }
+  select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; }
+  select:focus { border-color: var(--azul); }
+
+  .count { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+  .count b { color: var(--azul); }
+
+  .cards { display: flex; flex-direction: column; gap: 12px; }
+  .card { background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; padding: 20px 24px; display: grid; grid-template-columns: 4px 1fr auto; gap: 4px 18px; transition: box-shadow .18s, transform .18s; }
+  .card:hover { box-shadow: 0 14px 30px -20px #15151f50; transform: translateY(-2px); }
+  .card .barra { grid-row: 1 / span 3; width: 4px; border-radius: 4px; background: var(--cor, var(--azul)); }
+  .card a.title { grid-column: 2; font-size: 17px; font-weight: 600; color: var(--ink); text-decoration: none; line-height: 1.35; }
+  .card a.title:hover { color: var(--azul); }
+  .card .src { grid-column: 2; display: flex; flex-wrap: wrap; gap: 7px 16px; font-size: 12px; color: var(--ink-soft); align-items: center; margin-top: 3px; }
+  .card .src .fonte { font-weight: 500; }
+  .card .src .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-soft); }
+  .card .tags { grid-column: 3; grid-row: 1 / span 3; align-self: start; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .tag-eixo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; color: var(--branco); white-space: nowrap; }
+  .tag-kw { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+
+  .state { text-align: center; padding: 70px 20px; color: var(--ink-soft); }
+  .state .big { font-size: 21px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--linha); border-top-color: var(--azul); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 18px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 26px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-faint); text-align: center; }
-  footer a { color: var(--indigo); text-decoration: none; }
+  footer { border-top: 1px solid var(--linha); margin-top: 44px; padding-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); text-align: center; }
+  footer a { color: var(--azul); text-decoration: none; }
 </style>
 </head>
 <body>
 <section class="hero">
   <div class="hero-inner">
-    <div class="brand">&lt;labiia<span class="br">_</span>lab&gt;</div>
-    <div class="tagchip">&lt;monitor de notícias - labiia lab/&gt;</div>
-    <h1>O que a imprensa diz sobre <span class="hl">inteligência artificial</span></h1>
-    <p class="lede">Coleta automática de notícias por palavra-chave, atualizada a cada seis horas. Marque os termos que quiser acompanhar e combine com busca por texto e fonte.</p>
+    <div class="brand">&lt;labiia_lab&gt;</div>
+    <div class="tagchip">&lt;monitor de notícias/&gt;</div>
+    <h1>O que a imprensa diz sobre os eixos de pesquisa do laboratório</h1>
+    <p class="lede">Coleta automática de notícias por palavra-chave, organizada pelos seis eixos de pesquisa e atualizada a cada seis horas.</p>
   </div>
 </section>
 
 <div class="stats">
-  <div class="stat"><div class="num" id="stat-total">—</div><div class="lbl">notícias no acervo</div></div>
-  <div class="stat"><div class="num" id="stat-fontes">—</div><div class="lbl">fontes monitoradas</div></div>
-  <div class="stat"><div class="num" id="stat-kw">—</div><div class="lbl">palavras-chave</div></div>
-  <div class="stat"><div class="num" id="stat-data" style="font-size:20px;padding-top:6px">—</div><div class="lbl">última coleta</div></div>
+  <div class="stat"><div class="num" id="stat-total">...</div><div class="lbl">notícias no acervo</div></div>
+  <div class="stat"><div class="num" id="stat-eixos">...</div><div class="lbl">eixos de pesquisa</div></div>
+  <div class="stat"><div class="num" id="stat-fontes">...</div><div class="lbl">fontes monitoradas</div></div>
+  <div class="stat"><div class="num" id="stat-data" style="font-size:18px;padding-top:6px">...</div><div class="lbl">última coleta</div></div>
 </div>
 
 <div class="wrap">
-  <div class="section-tag">&lt;palavras-chave/&gt;</div>
+  <div class="section-tag">&lt;eixos de pesquisa/&gt;</div>
   <div class="kw-head">
-    <span class="lbl">Marque os termos que deseja ver (mostra notícias de qualquer um dos marcados)</span>
+    <span class="lbl">Marque os eixos que deseja acompanhar</span>
     <div class="kw-actions">
-      <button id="btn-todas">marcar todas</button>
+      <button id="btn-todas">marcar todos</button>
       <button id="btn-nenhuma">limpar</button>
     </div>
   </div>
-  <div class="kw-chips" id="kw-chips"></div>
+  <div class="eixos" id="eixos"></div>
 
   <div class="controls">
     <div class="search">
@@ -128,83 +160,104 @@ const REPO = "monitor-labiia";
 const BRANCH = "main";
 const CAMINHO_CSV = "dados/noticias.csv";
 
+// cores oficiais por eixo (manual de identidade, pág. 16)
+const CORES_EIXO = {
+  "IA e Método": "#4945FE",
+  "Eleições": "#DF3332",
+  "Sustentabilidade": "#2A8657",
+  "Democracia": "#9A6F0B",
+  "Ética e Regulação": "#9F45F6",
+  "Sociedade e Cultura": "#058299",
+};
+const corEixo = e => CORES_EIXO[e] || "#4945FE";
+
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
 
 let dados = [];
-let kwAtivas = new Set();   // keywords marcadas (valor real, com aspas)
+let eixosAtivos = new Set();
 const limpa = s => (s||"").replace(/"/g,'');
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
-function fmtData(s){ const d=parseData(s); if(!d) return s||"—"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
+function fmtData(s){ const d=parseData(s); if(!d) return s||"sem data"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
 
 function render(){
   const q=document.getElementById("q").value.toLowerCase().trim();
   const ffonte=document.getElementById("filtro-fonte").value;
   let filtrados=dados.filter(d=>{
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
-    if(!kwAtivas.has(d.keyword)) return false;
+    if(!eixosAtivos.has(d.eixo)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     return true;
   });
   filtrados.sort((a,b)=>{ const da=parseData(a.data_pub),db=parseData(b.data_pub); if(da&&db) return db-da; return 0; });
   document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${dados.length} notícias`;
   const lista=document.getElementById("lista");
-  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Tente outro termo, marque mais palavras-chave ou limpe a busca.</div>`; return; }
-  lista.innerHTML=`<div class="cards">${filtrados.map(d=>`
-    <div class="card">
+  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Marque mais eixos ou limpe a busca.</div>`; return; }
+  lista.innerHTML=`<div class="cards">${filtrados.map(d=>{
+    const c=corEixo(d.eixo);
+    return `<div class="card" style="--cor:${c}">
+      <div class="barra"></div>
       <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
-      <span class="tag">${limpa(d.keyword)}</span>
       <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span></div>
-    </div>`).join("")}</div>`;
+      <div class="tags">
+        <span class="tag-eixo" style="background:${c}">${d.eixo||""}</span>
+        <span class="tag-kw">${limpa(d.keyword)}</span>
+      </div>
+    </div>`;
+  }).join("")}</div>`;
 }
 
-function montarChips(kws){
-  const cont=document.getElementById("kw-chips");
-  const tick=`<span class="check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#5b4ce0" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>`;
-  cont.innerHTML=kws.map(k=>`<span class="kwchip on" data-kw="${k}">${tick}${limpa(k)}</span>`).join("");
-  cont.querySelectorAll(".kwchip").forEach(chip=>{
+function montarEixos(eixos){
+  const cont=document.getElementById("eixos");
+  cont.innerHTML=eixos.map(e=>{
+    const c=corEixo(e);
+    return `<span class="eixo-chip on" data-eixo="${e}" style="--cor:${c}"><span class="bola" style="background:${c}"></span>${e}</span>`;
+  }).join("");
+  cont.querySelectorAll(".eixo-chip").forEach(chip=>{
     chip.addEventListener("click",()=>{
-      const k=chip.dataset.kw;
-      if(kwAtivas.has(k)){ kwAtivas.delete(k); chip.classList.remove("on"); }
-      else { kwAtivas.add(k); chip.classList.add("on"); }
+      const e=chip.dataset.eixo;
+      if(eixosAtivos.has(e)){ eixosAtivos.delete(e); chip.classList.remove("on"); }
+      else { eixosAtivos.add(e); chip.classList.add("on"); }
       render();
     });
   });
 }
 
-function setTodas(ligar){
-  document.querySelectorAll(".kwchip").forEach(chip=>{
-    const k=chip.dataset.kw;
-    if(ligar){ kwAtivas.add(k); chip.classList.add("on"); }
-    else { kwAtivas.delete(k); chip.classList.remove("on"); }
+function setTodos(ligar){
+  document.querySelectorAll(".eixo-chip").forEach(chip=>{
+    const e=chip.dataset.eixo;
+    if(ligar){ eixosAtivos.add(e); chip.classList.add("on"); }
+    else { eixosAtivos.delete(e); chip.classList.remove("on"); }
   });
   render();
 }
 
-function popularFiltros(){
-  const kws=[...new Set(dados.map(d=>d.keyword).filter(Boolean))].sort();
+function popular(){
+  // ordena eixos pela ordem do manual
+  const ordem=Object.keys(CORES_EIXO);
+  const eixos=[...new Set(dados.map(d=>d.eixo).filter(Boolean))].sort((a,b)=>ordem.indexOf(a)-ordem.indexOf(b));
   const fontes=[...new Set(dados.map(d=>d.fonte).filter(Boolean))].sort();
-  kwAtivas=new Set(kws);            // começa tudo marcado
-  montarChips(kws);
+  eixosAtivos=new Set(eixos);
+  montarEixos(eixos);
   const selF=document.getElementById("filtro-fonte");
   fontes.forEach(f=>selF.insertAdjacentHTML("beforeend",`<option value="${f}">${f}</option>`));
   document.getElementById("stat-total").textContent=dados.length;
+  document.getElementById("stat-eixos").textContent=eixos.length;
   document.getElementById("stat-fontes").textContent=fontes.length;
-  document.getElementById("stat-kw").textContent=kws.length;
   const datas=dados.map(d=>parseData(d.coletado_em)).filter(Boolean);
-  if(datas.length){ const ultima=new Date(Math.max(...datas));
-    document.getElementById("stat-data").textContent=ultima.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+", "+ultima.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
+  if(datas.length){ const u=new Date(Math.max(...datas));
+    document.getElementById("stat-data").textContent=u.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+", "+u.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
 }
 
-document.getElementById("btn-todas").addEventListener("click",()=>setTodas(true));
-document.getElementById("btn-nenhuma").addEventListener("click",()=>setTodas(false));
+document.getElementById("btn-todas").addEventListener("click",()=>setTodos(true));
+document.getElementById("btn-nenhuma").addEventListener("click",()=>setTodos(false));
 
 Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
   complete:(res)=>{ dados=res.data.filter(r=>r.link);
-    if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado. Confira USUARIO, REPO e BRANCH no código.</div>`; return; }
-    popularFiltros(); render(); },
-  error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e se o caminho dados/noticias.csv existe.</div>`; }
+    if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado.</div>`; return; }
+    popular(); render(); },
+  error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e o caminho dados/noticias.csv.</div>`; }
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 </script>
