@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>monitor de notícias - &lt;labiia_lab&gt;</title>
+<title>monitor IA e eleições 2026 - &lt;labiia_lab&gt;</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +22,8 @@
   .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; }
   .brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px; color: var(--branco); letter-spacing: -0.02em; margin-bottom: 40px; }
   .tagchip { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #ffffff18; border: 1px solid #ffffff30; color: #dcdbff; padding: 8px 16px; border-radius: 8px; margin-bottom: 22px; }
-  h1 { font-weight: 600; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.12; letter-spacing: -0.01em; max-width: 18ch; }
-  .lede { margin-top: 18px; color: #cdccf0; max-width: 560px; font-size: 15px; }
+  h1 { font-weight: 600; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.12; letter-spacing: -0.01em; max-width: 20ch; }
+  .lede { margin-top: 18px; color: #cdccf0; max-width: 600px; font-size: 15px; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1280px; margin: -34px auto 0; padding: 0 28px; position: relative; z-index: 2; }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   .stat { background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; padding: 20px 22px; box-shadow: 0 12px 28px -18px #15151f40; }
@@ -31,7 +31,9 @@
   .stat .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 7px; }
   .wrap { max-width: 1280px; margin: 0 auto; padding: 48px 28px 80px; }
   .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--azul); background: #4945fe14; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 18px; }
+  .section-tag.mt { margin-top: 44px; }
 
+  /* recortes (antigos eixos) */
   .eixos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
   .eixo-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px 15px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 8px; }
   .eixo-chip .bola { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; background: var(--cor); }
@@ -39,18 +41,18 @@
   .eixo-chip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
   .eixo-chip.on .bola { background: var(--branco); }
 
-  .kw-painel { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; margin-bottom: 26px; background: var(--claro); display: none; }
-  .kw-painel.ativo { display: block; }
-  .kw-painel .titulo { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .kw-painel .titulo .bola { width: 12px; height: 12px; border-radius: 50%; }
-  .kw-painel .sub { font-size: 12px; color: var(--ink-soft); margin-bottom: 14px; }
-  .kw-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .kwchip { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 7px 13px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; }
-  .kwchip:hover { border-color: var(--cor); }
-  .kwchip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
-  .kw-mini-actions { margin-top: 12px; display: flex; gap: 8px; }
-  .kw-mini-actions button { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 4px 11px; border-radius: 7px; cursor: pointer; }
-  .kw-mini-actions button:hover { border-color: var(--azul); color: var(--azul); }
+  /* dimensões do codebook como filtros (mecanismo, plataforma, agente, valência) */
+  .dims { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 26px; }
+  @media (max-width: 720px) { .dims { grid-template-columns: 1fr; } }
+  .dim-painel { border: 1px solid var(--linha); border-radius: 14px; padding: 16px 18px; background: var(--claro); }
+  .dim-painel .titulo { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .dim-painel .titulo::before { content: "//"; color: var(--azul); }
+  .dim-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .dimchip { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 6px; }
+  .dimchip:hover { border-color: var(--azul); }
+  .dimchip .c { font-size: 10px; color: var(--ink-soft); }
+  .dimchip.on { background: var(--azul); border-color: var(--azul); color: var(--branco); }
+  .dimchip.on .c { color: #dcdbff; }
 
   .controls { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin-bottom: 22px; align-items: center; }
   @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } }
@@ -62,8 +64,46 @@
   select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; }
   select:focus { border-color: var(--azul); }
 
-  /* layout duas colunas: noticias + estatisticas */
-  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+  /* grade de gráficos de análise (substitui o painel lateral fixo) */
+  .analise { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-bottom: 30px; }
+  @media (max-width: 920px) { .analise { grid-template-columns: 1fr; } }
+  .graf { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; }
+  .graf.full { grid-column: 1 / -1; }
+  .graf h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
+  .graf h3::before { content: "//"; color: var(--azul); }
+  .graf .nota { font-size: 11px; color: var(--ink-soft); margin-bottom: 16px; }
+
+  /* barras horizontais (mecanismos, plataformas, agentes, valência) */
+  .hbars { display: flex; flex-direction: column; gap: 10px; }
+  .hbar-item { font-size: 13px; cursor: pointer; }
+  .hbar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .hbar-nome { display: flex; align-items: center; gap: 7px; color: var(--ink); }
+  .hbar-nome .bola { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .hbar-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+  .hbar-track { height: 6px; border-radius: 3px; background: var(--claro); overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+  .hbar-item:hover .hbar-fill { opacity: .82; }
+  .hbar-item.sel .hbar-nome { font-weight: 700; }
+
+  /* área temporal empilhada (volume por semana x dimensão) */
+  .stack { display: flex; align-items: flex-end; gap: 5px; height: 150px; padding-top: 8px; }
+  .stack-col { flex: 1; display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0; height: 100%; justify-content: flex-start; min-width: 0; position: relative; cursor: pointer; }
+  .stack-seg { width: 100%; transition: opacity .15s; }
+  .stack-col:hover .stack-seg { opacity: .8; }
+  .stack-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); text-align: center; margin-top: 6px; white-space: nowrap; transform: rotate(-35deg); transform-origin: center; }
+  .stack-wrap { display: flex; flex-direction: column; }
+  .legenda { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 26px; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; }
+  .leg-item .sw { width: 11px; height: 11px; border-radius: 3px; }
+
+  /* cruzamento mecanismo x plataforma (mini heatmap) */
+  .heat { display: grid; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+  .heat-cell { padding: 7px 4px; text-align: center; border-radius: 5px; color: var(--ink); }
+  .heat-head { color: var(--ink-soft); font-weight: 700; padding: 6px 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .heat-row-head { color: var(--ink-soft); font-weight: 700; padding: 6px 8px; text-align: right; white-space: nowrap; }
+
+  /* layout principal: lista + (resumo compacto) */
+  .layout { display: grid; grid-template-columns: 1fr 300px; gap: 28px; align-items: start; }
   @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
 
   .count { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
@@ -79,52 +119,22 @@
   .card .src .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-soft); }
   .card .tags { grid-column: 3; grid-row: 1 / span 3; align-self: start; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
   .tag-eixo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; color: var(--branco); white-space: nowrap; }
-  .tag-kw { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+  .tag-dim { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; }
 
-  /* painel de estatisticas */
+  /* coluna resumo */
   .stats-side { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 18px; }
   .box { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; }
   .box h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 16px; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
   .box h3::before { content: "//"; color: var(--azul); }
-
-  /* mini grafico de barras por semana */
-  .barras { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
-  .barra-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
-  .barra-val { width: 100%; background: var(--azul); border-radius: 4px 4px 0 0; min-height: 3px; transition: height .3s; position: relative; }
-  .barra-col:hover .barra-val { opacity: .8; }
-  .barra-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); }
-  .barra-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); white-space: nowrap; }
-
-  /* ranking por eixo */
-  .rank { display: flex; flex-direction: column; gap: 10px; }
-  .rank-item { font-size: 13px; }
-  .rank-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .rank-nome { display: flex; align-items: center; gap: 7px; color: var(--ink); }
-  .rank-nome .bola { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .rank-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
-  .rank-bar { height: 5px; border-radius: 3px; background: var(--claro); overflow: hidden; }
-  .rank-fill { height: 100%; border-radius: 3px; }
-
-  /* top fontes */
   .fontes-list { display: flex; flex-direction: column; gap: 9px; }
-  .fonte-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
-  .fonte-nome { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .fonte-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--azul); flex-shrink: 0; }
-
-  .box-vazio { font-size: 12px; color: var(--ink-soft); }
-
-  /* elementos clicaveis no painel */
-  .barra-col { cursor: pointer; }
-  .barra-col .barra-val { transition: height .3s, opacity .15s; }
-  .barra-col:hover .barra-val { opacity: .75; }
-  .barra-col.sel .barra-val { box-shadow: 0 0 0 1px var(--ink) inset; }
-  .barra-col.sel .barra-lbl { color: var(--ink); font-weight: 700; }
-  .fonte-row { cursor: pointer; padding: 4px 6px; margin: 0 -6px; border-radius: 7px; transition: background .15s; }
+  .fonte-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; cursor: pointer; padding: 4px 6px; margin: 0 -6px; border-radius: 7px; transition: background .15s; }
   .fonte-row:hover { background: var(--claro); }
   .fonte-row.sel { background: #4945fe14; }
   .fonte-row.sel .fonte-nome { color: var(--azul); font-weight: 600; }
+  .fonte-nome { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fonte-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--azul); flex-shrink: 0; }
+  .box-vazio { font-size: 12px; color: var(--ink-soft); }
 
-  /* faixa de filtros ativos */
   .filtros-ativos { display: none; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
   .filtros-ativos.ativo { display: flex; }
   .filtros-ativos .fa-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); }
@@ -146,32 +156,25 @@
 <section class="hero">
   <div class="hero-inner">
     <div class="brand">&lt;labiia_lab&gt;</div>
-    <div class="tagchip">&lt;monitor de notícias/&gt;</div>
-    <h1>Monitor de notícias sobre inteligência artificial (e correlatos) no Brasil</h1>
-    <p class="lede">Coleta automática de notícias sobre IA, organizada pelos eixos de pesquisa do Labiia Lab e atualizada duas vezes ao dia. Escolha um eixo, refine pelas palavras-chave e filtre por semana ou pelas principais fontes.</p>
+    <div class="tagchip">&lt;monitor IA e eleições 2026/&gt;</div>
+    <h1>Inteligência artificial nas eleições brasileiras de 2026</h1>
+    <p class="lede">Monitoramento contínuo da cobertura midiática sobre IA e eleições, classificado pelas dimensões do codebook do LABIIA: recorte temático, mecanismo de IA, plataforma, agente principal e valência narrativa. Atualizado duas vezes ao dia.</p>
   </div>
 </section>
 
 <div class="stats">
-  <div class="stat"><div class="num" id="stat-total">...</div><div class="lbl">notícias no acervo</div></div>
-  <div class="stat"><div class="num" id="stat-eixos">...</div><div class="lbl">eixos de pesquisa</div></div>
+  <div class="stat"><div class="num" id="stat-total">...</div><div class="lbl">matérias no corpus</div></div>
+  <div class="stat"><div class="num" id="stat-deepfake">...</div><div class="lbl">mencionam deepfake</div></div>
   <div class="stat"><div class="num" id="stat-fontes">...</div><div class="lbl">fontes monitoradas</div></div>
   <div class="stat"><div class="num" id="stat-data" style="font-size:18px;padding-top:6px">...</div><div class="lbl">última coleta</div></div>
 </div>
 
 <div class="wrap">
-  <div class="section-tag">&lt;eixos de pesquisa/&gt;</div>
+  <div class="section-tag">&lt;recortes de coleta/&gt;</div>
   <div class="eixos" id="eixos"></div>
 
-  <div class="kw-painel" id="kw-painel">
-    <div class="titulo" id="kw-titulo"><span class="bola"></span><span id="kw-titulo-txt"></span></div>
-    <div class="sub">Marque as palavras-chave deste eixo (mostra notícias de qualquer uma das marcadas)</div>
-    <div class="kw-chips" id="kw-chips"></div>
-    <div class="kw-mini-actions">
-      <button id="kw-todas">marcar todas</button>
-      <button id="kw-nenhuma">limpar</button>
-    </div>
-  </div>
+  <div class="section-tag mt">&lt;dimensões do codebook/&gt;</div>
+  <div class="dims" id="dims"></div>
 
   <div class="controls">
     <div class="search">
@@ -181,26 +184,54 @@
     <select id="filtro-fonte"><option value="">Todas as fontes</option></select>
   </div>
 
+  <div class="filtros-ativos" id="filtros-ativos">
+    <span class="fa-label">filtros:</span>
+    <span id="fa-pills"></span>
+    <button class="fa-limpar" id="fa-limpar">limpar tudo</button>
+  </div>
+
+  <div class="section-tag mt">&lt;análise/&gt;</div>
+  <div class="analise" id="analise">
+    <div class="graf full">
+      <h3>volume por semana, por valência narrativa</h3>
+      <div class="nota">cada coluna é uma semana; as cores empilham a valência dominante das matérias do recorte filtrado</div>
+      <div id="graf-temporal"><div class="box-vazio">sem dados</div></div>
+      <div class="legenda" id="leg-temporal"></div>
+    </div>
+    <div class="graf">
+      <h3>mecanismos de IA</h3>
+      <div class="nota">o que o relatório chama de mecanismo; clique para filtrar</div>
+      <div id="graf-mecanismos"><div class="box-vazio">sem dados</div></div>
+    </div>
+    <div class="graf">
+      <h3>plataformas mencionadas</h3>
+      <div class="nota">plataforma citada no título; clique para filtrar</div>
+      <div id="graf-plataformas"><div class="box-vazio">sem dados</div></div>
+    </div>
+    <div class="graf">
+      <h3>agente principal</h3>
+      <div class="nota">quem protagoniza a narrativa</div>
+      <div id="graf-agentes"><div class="box-vazio">sem dados</div></div>
+    </div>
+    <div class="graf">
+      <h3>valência narrativa</h3>
+      <div class="nota">enquadramento dominante da matéria</div>
+      <div id="graf-valencia"><div class="box-vazio">sem dados</div></div>
+    </div>
+    <div class="graf full">
+      <h3>cruzamento mecanismo × plataforma</h3>
+      <div class="nota">quantas matérias citam cada par; intensidade da cor proporcional à contagem</div>
+      <div id="graf-heat"><div class="box-vazio">sem dados</div></div>
+    </div>
+  </div>
+
+  <div class="section-tag mt">&lt;matérias/&gt;</div>
   <div class="layout">
     <div>
-      <div class="filtros-ativos" id="filtros-ativos">
-        <span class="fa-label">filtros:</span>
-        <span id="fa-pills"></span>
-        <button class="fa-limpar" id="fa-limpar">limpar tudo</button>
-      </div>
       <div class="count" id="count"></div>
-      <div id="lista"><div class="state"><div class="spinner"></div>Carregando notícias do repositório...</div></div>
+      <div id="lista"><div class="state"><div class="spinner"></div>Carregando corpus do repositório...</div></div>
     </div>
-
     <aside class="stats-side" id="stats-side">
-      <div class="box">
-        <h3>volume por semana</h3>
-        <div id="grafico-semanas"><div class="box-vazio">sem dados</div></div>
-      </div>
-      <div class="box">
-        <h3>notícias por eixo</h3>
-        <div class="rank" id="rank-eixos"><div class="box-vazio">sem dados</div></div>
-      </div>
       <div class="box">
         <h3>top fontes</h3>
         <div class="fontes-list" id="top-fontes"><div class="box-vazio">sem dados</div></div>
@@ -208,7 +239,7 @@
     </aside>
   </div>
 
-  <footer>dados via Google News RSS · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
+  <footer>dados via Google News RSS · classificação por codebook léxico · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
 </div>
 
 <script>
@@ -217,186 +248,229 @@ const REPO = "monitor-labiia";
 const BRANCH = "main";
 const CAMINHO_CSV = "dados/noticias.csv";
 
-const CORES_EIXO = {
-  "IA e Método": "#4945FE",
-  "Eleições": "#DF3332",
-  "Sustentabilidade": "#2A8657",
-  "Democracia": "#9A6F0B",
-  "Ética e Regulação": "#9F45F6",
-  "Sociedade e Cultura": "#058299",
+// cores por recorte (mantém a paleta da marca)
+const CORES_RECORTE = {
+  "Regulação e TSE": "#4945FE",
+  "Deepfakes e conteúdo sintético": "#DF3332",
+  "Desinformação e checagem": "#9A6F0B",
+  "Plataformas e chatbots": "#058299",
+  "Campanhas e candidatos": "#9F45F6",
+  "Integridade e democracia": "#2A8657",
 };
-const corEixo = e => CORES_EIXO[e] || "#4945FE";
+const corRecorte = e => CORES_RECORTE[e] || "#4945FE";
+
+// cores por valência (para a área empilhada e barras)
+const CORES_VALENCIA = {
+  "regulação": "#4945FE",
+  "caso concreto": "#DF3332",
+  "alerta": "#9A6F0B",
+  "análise": "#058299",
+  "ceticismo": "#6B6B78",
+  "otimismo": "#2A8657",
+  "não classificável": "#C4C4CC",
+};
+const corValencia = v => CORES_VALENCIA[v] || "#C4C4CC";
 
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
 
 let dados = [];
-let eixoAtivo = null;
-let kwAtivas = new Set();
-let filtroSemana = null;   // timestamp do inicio da semana selecionada, ou null
-let filtroFonteClick = null; // nome da fonte selecionada via clique, ou null
+let recorteAtivo = null;             // null = todos os recortes
+let filtros = { mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
+let filtroFonteClick = null;
 const limpa = s => (s||"").replace(/"/g,'');
-const normKw = s => (s||"").replace(/"/g,'').trim().toLowerCase();
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
 function fmtData(s){ const d=parseData(s); if(!d) return s||"sem data"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
-
-// retorna o domingo (inicio) da semana de uma data, como chave AAAA-MM-DD
-function inicioSemana(d){
-  const x=new Date(d); x.setHours(0,0,0,0);
-  x.setDate(x.getDate()-x.getDay()); // volta pro domingo
-  return x;
-}
+function inicioSemana(d){ const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()-x.getDay()); return x; }
 function rotuloSemana(d){ return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}); }
 
-// aplica os filtros atuais e devolve a lista de noticias visiveis
+// divide um campo multivalorado "a|b|c" em lista
+function multi(v){ return (v||"").split("|").map(s=>s.trim()).filter(Boolean); }
+
+// uma matéria casa com um filtro de dimensão se o valor estiver entre os seus
+function casaDim(d, campo, alvo){
+  if(!alvo) return true;
+  if(campo==="mecanismos" || campo==="plataformas") return multi(d[campo]).includes(alvo);
+  return d[campo]===alvo;
+}
+
 function filtrar(){
   const q=document.getElementById("q").value.toLowerCase().trim();
   const ffonte=document.getElementById("filtro-fonte").value;
-  if(!eixoAtivo) return [];
   return dados.filter(d=>{
-    if(d.eixo!==eixoAtivo) return false;
-    if(!kwAtivas.has(normKw(d.keyword))) return false;
+    if(recorteAtivo && d.recorte!==recorteAtivo) return false;
+    for(const campo in filtros){ if(!casaDim(d, campo, filtros[campo])) return false; }
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
-    if(filtroSemana){
-      const dt=parseData(d.data_pub);
-      if(!dt || inicioSemana(dt).getTime()!==filtroSemana) return false;
-    }
     return true;
   });
 }
 
 function render(){
   const lista=document.getElementById("lista");
-  if(!eixoAtivo){
-    lista.innerHTML=`<div class="state"><div class="big">Escolha um eixo de pesquisa</div>Clique em um dos eixos acima para ver as notícias e suas palavras-chave.</div>`;
-    document.getElementById("count").innerHTML="";
-    atualizarEstatisticas([]);
-    return;
-  }
   let filtrados=filtrar();
   filtrados.sort((a,b)=>{ const da=parseData(a.data_pub),db=parseData(b.data_pub); if(da&&db) return db-da; return 0; });
 
-  const totalEixo=dados.filter(d=>d.eixo===eixoAtivo).length;
-  document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${totalEixo} notícias em ${eixoAtivo}`;
+  const totalBase = recorteAtivo ? dados.filter(d=>d.recorte===recorteAtivo).length : dados.length;
+  const escopo = recorteAtivo || "todos os recortes";
+  document.getElementById("count").innerHTML=`mostrando <b>${filtrados.length}</b> de ${totalBase} matérias em ${escopo}`;
 
-  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Marque mais palavras-chave ou limpe a busca.</div>`; }
+  if(filtrados.length===0){ lista.innerHTML=`<div class="state"><div class="big">Nada encontrado</div>Afrouxe os filtros de dimensão ou limpe a busca.</div>`; }
   else {
     lista.innerHTML=`<div class="cards">${filtrados.map(d=>{
-      const c=corEixo(d.eixo);
+      const c=corRecorte(d.recorte);
+      const mecs=multi(d.mecanismos).slice(0,2).map(m=>`<span class="tag-dim">${m}</span>`).join("");
+      const plats=multi(d.plataformas).slice(0,1).map(p=>`<span class="tag-dim">${p}</span>`).join("");
       return `<div class="card" style="--cor:${c}">
         <div class="barra"></div>
         <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
-        <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span></div>
-        <div class="tags"><span class="tag-eixo" style="background:${c}">${d.eixo||""}</span><span class="tag-kw">${limpa(d.keyword)}</span></div>
+        <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span><span class="dot"></span><span>${d.valencia_dominante||""}</span></div>
+        <div class="tags"><span class="tag-eixo" style="background:${c}">${d.recorte||""}</span>${mecs}${plats}</div>
       </div>`;
     }).join("")}</div>`;
   }
-  atualizarEstatisticas(filtrados);
+  atualizarAnalise(filtrados);
 }
 
-function rotuloSemanaCompleto(t){ const d=new Date(t); const fim=new Date(t); fim.setDate(fim.getDate()+6); return rotuloSemana(d)+" a "+rotuloSemana(fim); }
-
+// ---------- filtros ativos ----------
 function desenharFiltrosAtivos(){
   const faixa=document.getElementById("filtros-ativos");
   const pills=document.getElementById("fa-pills");
   let html="";
-  if(filtroSemana){ html+=`<span class="fa-pill" data-tipo="semana">semana ${rotuloSemanaCompleto(filtroSemana)} <span class="x">×</span></span>`; }
+  for(const campo in filtros){ if(filtros[campo]) html+=`<span class="fa-pill" data-tipo="dim" data-campo="${campo}">${filtros[campo]} <span class="x">×</span></span>`; }
   if(filtroFonteClick){ html+=`<span class="fa-pill" data-tipo="fonte">${filtroFonteClick} <span class="x">×</span></span>`; }
   pills.innerHTML=html;
-  faixa.classList.toggle("ativo", !!(filtroSemana||filtroFonteClick));
+  const algum = filtroFonteClick || Object.values(filtros).some(Boolean);
+  faixa.classList.toggle("ativo", !!algum);
   pills.querySelectorAll(".fa-pill").forEach(p=>{
     p.addEventListener("click",()=>{
-      if(p.dataset.tipo==="semana") filtroSemana=null;
       if(p.dataset.tipo==="fonte") filtroFonteClick=null;
+      if(p.dataset.tipo==="dim") filtros[p.dataset.campo]=null;
+      sincronizarChipsDim();
       render();
     });
   });
 }
 
-function atualizarEstatisticas(visiveis){
+// ---------- grade de análise ----------
+function atualizarAnalise(visiveis){
   desenharFiltrosAtivos();
-  desenharSemanas(visiveis);
-  desenharRankEixos();
+  desenharTemporal(visiveis);
+  desenharHBars("graf-mecanismos", contarMulti(visiveis,"mecanismos"), "mecanismos");
+  desenharHBars("graf-plataformas", contarMulti(visiveis,"plataformas"), "plataformas");
+  desenharHBars("graf-agentes", contarSimples(visiveis,"agente_principal"), "agente_principal");
+  desenharHBars("graf-valencia", contarSimples(visiveis,"valencia_dominante"), "valencia_dominante", true);
+  desenharHeat(visiveis);
   desenharTopFontes(visiveis);
 }
 
-// 1) volume por semana (ultimas 6 semanas)
-function desenharSemanas(lista){
-  const cont=document.getElementById("grafico-semanas");
-  const comData=lista.filter(d=>parseData(d.data_pub));
-  if(comData.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
-  // monta as ultimas 6 semanas a partir de hoje
-  const hoje=new Date();
-  const semanas=[];
-  for(let i=5;i>=0;i--){
-    const ini=inicioSemana(hoje); ini.setDate(ini.getDate()-i*7);
-    semanas.push({ini, qtd:0});
-  }
-  comData.forEach(d=>{
-    const ini=inicioSemana(parseData(d.data_pub)).getTime();
-    const s=semanas.find(x=>x.ini.getTime()===ini);
-    if(s) s.qtd++;
-  });
-  const max=Math.max(...semanas.map(s=>s.qtd),1);
-  cont.innerHTML=`<div class="barras">${semanas.map(s=>{
-    const h=Math.round((s.qtd/max)*100);
-    const sel=(filtroSemana===s.ini.getTime())?" sel":"";
-    return `<div class="barra-col${sel}" data-semana="${s.ini.getTime()}" title="${s.qtd} notícias na semana de ${rotuloSemana(s.ini)} (clique para filtrar)">
-      <span class="barra-num">${s.qtd}</span>
-      <div class="barra-val" style="height:${h}%"></div>
-      <span class="barra-lbl">${rotuloSemana(s.ini)}</span>
+function contarMulti(lista, campo){
+  const c={};
+  lista.forEach(d=>multi(d[campo]).forEach(v=>{ c[v]=(c[v]||0)+1; }));
+  return Object.entries(c).sort((a,b)=>b[1]-a[1]);
+}
+function contarSimples(lista, campo){
+  const c={};
+  lista.forEach(d=>{ const v=d[campo]; if(v && v!=="não identificado" && v!=="não classificável") c[v]=(c[v]||0)+1; });
+  return Object.entries(c).sort((a,b)=>b[1]-a[1]);
+}
+
+function desenharHBars(elId, itens, campo, usarCorValencia=false){
+  const cont=document.getElementById(elId);
+  if(!itens.length){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
+  const max=Math.max(...itens.map(i=>i[1]),1);
+  cont.innerHTML=`<div class="hbars">${itens.map(([nome,qtd])=>{
+    const w=Math.round((qtd/max)*100);
+    const cor = usarCorValencia ? corValencia(nome) : (recorteAtivo ? corRecorte(recorteAtivo) : "#4945FE");
+    const sel = (filtros[campo]===nome) ? " sel" : "";
+    return `<div class="hbar-item${sel}" data-campo="${campo}" data-valor="${nome.replace(/"/g,'&quot;')}">
+      <div class="hbar-top">
+        <span class="hbar-nome"><span class="bola" style="background:${cor}"></span>${nome}</span>
+        <span class="hbar-qtd">${qtd}</span>
+      </div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${w}%;background:${cor}"></div></div>
     </div>`;
   }).join("")}</div>`;
-  cont.querySelectorAll(".barra-col").forEach(col=>{
-    col.addEventListener("click",()=>{
-      const t=Number(col.dataset.semana);
-      filtroSemana=(filtroSemana===t)?null:t;  // toggle
+  cont.querySelectorAll(".hbar-item").forEach(it=>{
+    it.addEventListener("click",()=>{
+      const campo=it.dataset.campo, valor=it.dataset.valor;
+      filtros[campo] = (filtros[campo]===valor) ? null : valor;
+      sincronizarChipsDim();
       render();
     });
   });
 }
 
-// 2) ranking por eixo: sempre os seis eixos (acervo todo), respeitando so semana e fonte
-function desenharRankEixos(){
-  const cont=document.getElementById("rank-eixos");
-  const ordem=Object.keys(CORES_EIXO);
-  const q=document.getElementById("q").value.toLowerCase().trim();
-  const ffonte=document.getElementById("filtro-fonte").value;
-  const base=dados.filter(d=>{
-    if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
-    if(ffonte && d.fonte!==ffonte) return false;
-    if(filtroSemana){ const dt=parseData(d.data_pub); if(!dt || inicioSemana(dt).getTime()!==filtroSemana) return false; }
-    if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
-    return true;
+// área empilhada: semanas x valência
+function desenharTemporal(lista){
+  const cont=document.getElementById("graf-temporal");
+  const leg=document.getElementById("leg-temporal");
+  const comData=lista.filter(d=>parseData(d.data_pub));
+  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; leg.innerHTML=""; return; }
+  const minD=inicioSemana(new Date(Math.min(...comData.map(d=>parseData(d.data_pub)))));
+  const maxD=inicioSemana(new Date(Math.max(...comData.map(d=>parseData(d.data_pub)))));
+  const semanas=[];
+  for(let t=new Date(minD); t<=maxD; t.setDate(t.getDate()+7)){ semanas.push({ini:new Date(t), val:{}}); }
+  const vals=Object.keys(CORES_VALENCIA);
+  comData.forEach(d=>{
+    const ini=inicioSemana(parseData(d.data_pub)).getTime();
+    const s=semanas.find(x=>x.ini.getTime()===ini);
+    if(s){ const v=d.valencia_dominante||"não classificável"; s.val[v]=(s.val[v]||0)+1; }
   });
-  const cont_eixo={};
-  base.forEach(d=>{ if(d.eixo) cont_eixo[d.eixo]=(cont_eixo[d.eixo]||0)+1; });
-  const itens=ordem.filter(e=>cont_eixo[e]).map(e=>({eixo:e, qtd:cont_eixo[e]}));
-  if(itens.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
-  const max=Math.max(...itens.map(i=>i.qtd),1);
-  cont.innerHTML=itens.map(i=>{
-    const c=corEixo(i.eixo); const w=Math.round((i.qtd/max)*100);
-    return `<div class="rank-item">
-      <div class="rank-top">
-        <span class="rank-nome"><span class="bola" style="background:${c}"></span>${i.eixo}</span>
-        <span class="rank-qtd">${i.qtd}</span>
-      </div>
-      <div class="rank-bar"><div class="rank-fill" style="width:${w}%;background:${c}"></div></div>
+  const maxTotal=Math.max(...semanas.map(s=>Object.values(s.val).reduce((a,b)=>a+b,0)),1);
+  cont.innerHTML=`<div class="stack">${semanas.map(s=>{
+    const total=Object.values(s.val).reduce((a,b)=>a+b,0);
+    const altura=Math.round((total/maxTotal)*100);
+    const segs=vals.filter(v=>s.val[v]).map(v=>{
+      const h=(s.val[v]/Math.max(total,1))*altura;
+      return `<div class="stack-seg" style="height:${h}%;background:${corValencia(v)}" title="${v}: ${s.val[v]}"></div>`;
+    }).join("");
+    return `<div class="stack-wrap" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0">
+      <div class="stack-col" style="height:100%">${segs}</div>
+      <span class="stack-lbl">${rotuloSemana(s.ini)}</span>
     </div>`;
-  }).join("");
+  }).join("")}</div>`;
+  const presentes=vals.filter(v=>semanas.some(s=>s.val[v]));
+  leg.innerHTML=presentes.map(v=>`<span class="leg-item"><span class="sw" style="background:${corValencia(v)}"></span>${v}</span>`).join("");
 }
 
-// 3) top fontes (do recorte filtrado, ou geral se nada filtrado)
+// heatmap mecanismo x plataforma
+function desenharHeat(lista){
+  const cont=document.getElementById("graf-heat");
+  const mecs=contarMulti(lista,"mecanismos").slice(0,5).map(x=>x[0]);
+  const plats=contarMulti(lista,"plataformas").slice(0,5).map(x=>x[0]);
+  if(!mecs.length || !plats.length){ cont.innerHTML=`<div class="box-vazio">sem cruzamentos com dados suficientes</div>`; return; }
+  const mat={}; let max=0;
+  mecs.forEach(m=>{ mat[m]={}; plats.forEach(p=>{ mat[m][p]=0; }); });
+  lista.forEach(d=>{
+    const dm=multi(d.mecanismos), dp=multi(d.plataformas);
+    dm.forEach(m=>{ if(mat[m]) dp.forEach(p=>{ if(mat[m][p]!==undefined){ mat[m][p]++; max=Math.max(max,mat[m][p]); } }); });
+  });
+  const cols=`160px repeat(${plats.length}, 1fr)`;
+  let html=`<div class="heat" style="grid-template-columns:${cols}">`;
+  html+=`<div></div>`+plats.map(p=>`<div class="heat-head" title="${p}">${p}</div>`).join("");
+  mecs.forEach(m=>{
+    html+=`<div class="heat-row-head">${m}</div>`;
+    plats.forEach(p=>{
+      const v=mat[m][p]; const intensidade = max? v/max : 0;
+      const bg = v? `rgba(73,69,254,${0.12+intensidade*0.78})` : "var(--claro)";
+      const cor = intensidade>0.55? "#fff" : "var(--ink)";
+      html+=`<div class="heat-cell" style="background:${bg};color:${cor}">${v||""}</div>`;
+    });
+  });
+  html+=`</div>`;
+  cont.innerHTML=html;
+}
+
 function desenharTopFontes(visiveis){
   const cont=document.getElementById("top-fontes");
   const base=(visiveis && visiveis.length) ? visiveis : dados;
-  const cont_f={};
-  base.forEach(d=>{ const f=d.fonte||"desconhecida"; cont_f[f]=(cont_f[f]||0)+1; });
-  const itens=Object.entries(cont_f).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if(itens.length===0){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
+  const c={};
+  base.forEach(d=>{ const f=d.fonte||"desconhecida"; c[f]=(c[f]||0)+1; });
+  const itens=Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if(!itens.length){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
   cont.innerHTML=itens.map(([f,q])=>{
     const sel=(filtroFonteClick===f)?" sel":"";
     return `<div class="fonte-row${sel}" data-fonte="${f.replace(/"/g,'&quot;')}"><span class="fonte-nome">${f}</span><span class="fonte-qtd">${q}</span></div>`;
@@ -404,87 +478,106 @@ function desenharTopFontes(visiveis){
   cont.querySelectorAll(".fonte-row").forEach(row=>{
     row.addEventListener("click",()=>{
       const f=row.dataset.fonte;
-      filtroFonteClick=(filtroFonteClick===f)?null:f;  // toggle
+      filtroFonteClick=(filtroFonteClick===f)?null:f;
       render();
     });
   });
 }
 
-function kwsDoEixo(eixo){
-  return [...new Set(dados.filter(d=>d.eixo===eixo).map(d=>d.keyword).filter(Boolean))].sort();
+// ---------- chips de dimensão (topo) ----------
+const DIMENSOES = [
+  { campo:"mecanismos", titulo:"mecanismo de IA", multi:true },
+  { campo:"plataformas", titulo:"plataforma", multi:true },
+  { campo:"agente_principal", titulo:"agente principal", multi:false, ignora:["não identificado"] },
+  { campo:"valencia_dominante", titulo:"valência narrativa", multi:false, ignora:["não classificável"] },
+];
+
+function valoresDimensao(dim){
+  const c={};
+  const base = recorteAtivo ? dados.filter(d=>d.recorte===recorteAtivo) : dados;
+  base.forEach(d=>{
+    const vs = dim.multi ? multi(d[dim.campo]) : [d[dim.campo]].filter(Boolean);
+    vs.forEach(v=>{ if(!(dim.ignora||[]).includes(v)) c[v]=(c[v]||0)+1; });
+  });
+  return Object.entries(c).sort((a,b)=>b[1]-a[1]);
 }
 
-function abrirEixo(eixo){
-  eixoAtivo=eixo;
-  filtroSemana=null; filtroFonteClick=null;
-  document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on", ch.dataset.eixo===eixo));
-  const c=corEixo(eixo);
-  const kws=kwsDoEixo(eixo);
-  kwAtivas=new Set(kws.map(normKw));
-
-  const painel=document.getElementById("kw-painel");
-  painel.classList.add("ativo");
-  painel.style.setProperty("--cor", c);
-  document.getElementById("kw-titulo-txt").textContent=eixo;
-  document.querySelector("#kw-titulo .bola").style.background=c;
-
-  const cont=document.getElementById("kw-chips");
-  cont.innerHTML=kws.map(k=>`<span class="kwchip on" data-kw="${normKw(k)}" style="--cor:${c}">${limpa(k)}</span>`).join("");
-  cont.querySelectorAll(".kwchip").forEach(chip=>{
-    chip.addEventListener("click",()=>{
-      const k=chip.dataset.kw;
-      if(kwAtivas.has(k)){ kwAtivas.delete(k); chip.classList.remove("on"); }
-      else { kwAtivas.add(k); chip.classList.add("on"); }
+function montarDims(){
+  const cont=document.getElementById("dims");
+  cont.innerHTML=DIMENSOES.map(dim=>{
+    const itens=valoresDimensao(dim);
+    const chips=itens.map(([v,q])=>{
+      const on=(filtros[dim.campo]===v)?" on":"";
+      return `<span class="dimchip${on}" data-campo="${dim.campo}" data-valor="${v.replace(/"/g,'&quot;')}">${v} <span class="c">${q}</span></span>`;
+    }).join("") || `<span class="box-vazio">sem dados</span>`;
+    return `<div class="dim-painel"><div class="titulo">${dim.titulo}</div><div class="dim-chips">${chips}</div></div>`;
+  }).join("");
+  cont.querySelectorAll(".dimchip").forEach(ch=>{
+    ch.addEventListener("click",()=>{
+      const campo=ch.dataset.campo, valor=ch.dataset.valor;
+      filtros[campo]=(filtros[campo]===valor)?null:valor;
+      sincronizarChipsDim();
       render();
     });
   });
-  render();
+}
+// reflete o estado dos filtros nos chips sem reconstruir tudo
+function sincronizarChipsDim(){
+  document.querySelectorAll("#dims .dimchip").forEach(ch=>{
+    const on = filtros[ch.dataset.campo]===ch.dataset.valor;
+    ch.classList.toggle("on", on);
+  });
 }
 
-function montarEixos(eixos){
+// ---------- recortes (topo) ----------
+function montarRecortes(recortes){
   const cont=document.getElementById("eixos");
-  cont.innerHTML=eixos.map(e=>{
-    const c=corEixo(e);
-    return `<span class="eixo-chip" data-eixo="${e}" style="--cor:${c}"><span class="bola"></span>${e}</span>`;
+  // primeiro chip = "todos"
+  const todos=`<span class="eixo-chip on" data-recorte="" style="--cor:#15151F"><span class="bola"></span>todos os recortes</span>`;
+  cont.innerHTML=todos+recortes.map(e=>{
+    const c=corRecorte(e);
+    return `<span class="eixo-chip" data-recorte="${e}" style="--cor:${c}"><span class="bola"></span>${e}</span>`;
   }).join("");
   cont.querySelectorAll(".eixo-chip").forEach(chip=>{
-    chip.addEventListener("click",()=>abrirEixo(chip.dataset.eixo));
+    chip.addEventListener("click",()=>abrirRecorte(chip.dataset.recorte||null));
   });
 }
 
-document.getElementById("kw-todas").addEventListener("click",()=>{
-  document.querySelectorAll(".kwchip").forEach(ch=>{ kwAtivas.add(ch.dataset.kw); ch.classList.add("on"); });
+function abrirRecorte(recorte){
+  recorteAtivo=recorte;
+  filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
+  filtroFonteClick=null;
+  document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on",(ch.dataset.recorte||null)===recorte));
+  montarDims();
   render();
-});
-document.getElementById("kw-nenhuma").addEventListener("click",()=>{
-  document.querySelectorAll(".kwchip").forEach(ch=>{ kwAtivas.delete(ch.dataset.kw); ch.classList.remove("on"); });
-  render();
-});
+}
 
+// ---------- boot ----------
 function popular(){
-  const ordem=Object.keys(CORES_EIXO);
-  const eixos=[...new Set(dados.map(d=>d.eixo).filter(Boolean))].sort((a,b)=>ordem.indexOf(a)-ordem.indexOf(b));
+  const ordem=Object.keys(CORES_RECORTE);
+  const recortes=[...new Set(dados.map(d=>d.recorte).filter(Boolean))].sort((a,b)=>ordem.indexOf(a)-ordem.indexOf(b));
   const fontes=[...new Set(dados.map(d=>d.fonte).filter(Boolean))].sort();
-  montarEixos(eixos);
+  montarRecortes(recortes);
   const selF=document.getElementById("filtro-fonte");
   fontes.forEach(f=>selF.insertAdjacentHTML("beforeend",`<option value="${f}">${f}</option>`));
   document.getElementById("stat-total").textContent=dados.length;
-  document.getElementById("stat-eixos").textContent=eixos.length;
+  document.getElementById("stat-deepfake").textContent=dados.filter(d=>d.tem_deepfake==="sim").length;
   document.getElementById("stat-fontes").textContent=fontes.length;
   const datas=dados.map(d=>parseData(d.coletado_em)).filter(Boolean);
   if(datas.length){ const u=new Date(Math.max(...datas));
     document.getElementById("stat-data").textContent=u.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+", "+u.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
-  if(eixos.length) abrirEixo(eixos[0]);
+  abrirRecorte(null);
 }
 
 Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
   complete:(res)=>{ dados=res.data.filter(r=>r.link);
-    if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Acervo vazio</div>O CSV ainda não tem notícias, ou o caminho está errado.</div>`; return; }
+    if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Corpus vazio</div>O CSV ainda não tem matérias, ou o caminho está errado.</div>`; return; }
     popular(); },
   error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e o caminho dados/noticias.csv.</div>`; }
 });
 document.getElementById("fa-limpar").addEventListener("click",()=>{
-  filtroSemana=null; filtroFonteClick=null; render();
+  filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
+  filtroFonteClick=null; sincronizarChipsDim(); render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 </script>
