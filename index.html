@@ -85,16 +85,27 @@
   .hbar-item:hover .hbar-fill { opacity: .82; }
   .hbar-item.sel .hbar-nome { font-weight: 700; }
 
-  /* área temporal empilhada (volume por semana x dimensão) */
-  .stack { display: flex; align-items: flex-end; gap: 5px; height: 150px; padding-top: 8px; }
-  .stack-col { flex: 1; display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0; height: 100%; justify-content: flex-start; min-width: 0; position: relative; cursor: pointer; }
-  .stack-seg { width: 100%; transition: opacity .15s; }
-  .stack-col:hover .stack-seg { opacity: .8; }
+  /* volume por semana: barras simples arredondadas e clicáveis */
+  .stack { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-top: 8px; }
+  .stack-wrap { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; cursor: pointer; }
+  .stack-col { display: flex; flex-direction: column; justify-content: flex-end; }
+  .stack-bar { width: 100%; background: var(--azul); border-radius: 6px 6px 0 0; transition: opacity .15s, box-shadow .15s; min-height: 3px; }
+  .stack-wrap:hover .stack-bar { opacity: .8; }
+  .stack-wrap.sel .stack-bar { box-shadow: 0 0 0 2px var(--ink) inset; }
+  .stack-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); text-align: center; margin-bottom: 4px; }
   .stack-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); text-align: center; margin-top: 6px; white-space: nowrap; transform: rotate(-35deg); transform-origin: center; }
-  .stack-wrap { display: flex; flex-direction: column; }
-  .legenda { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 26px; }
+  .stack-wrap.sel .stack-lbl { color: var(--azul); font-weight: 700; }
+
+  /* gráfico de linhas: recortes ao longo dos dias da semana clicada */
+  .linhas-wrap { margin-top: 22px; border-top: 1px solid var(--linha); padding-top: 18px; }
+  .linhas-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .linhas-titulo { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .linhas-fechar { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 4px 11px; border-radius: 7px; cursor: pointer; }
+  .linhas-fechar:hover { border-color: var(--azul); color: var(--azul); }
+  .linhas-svg { width: 100%; height: auto; display: block; margin-top: 8px; }
+  .legenda { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 16px; }
   .leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; }
-  .leg-item .sw { width: 11px; height: 11px; border-radius: 3px; }
+  .leg-item .sw { width: 14px; height: 3px; border-radius: 2px; }
 
   /* cruzamento mecanismo x plataforma (mini heatmap) */
   .heat-controls { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -200,10 +211,17 @@
   <div class="section-tag mt">&lt;análise/&gt;</div>
   <div class="analise" id="analise">
     <div class="graf full">
-      <h3>volume por semana, por valência narrativa</h3>
-      <div class="nota">cada coluna é uma semana; as cores empilham a valência dominante das matérias do recorte filtrado</div>
+      <h3>volume por semana</h3>
+      <div class="nota">cada barra é uma semana; clique numa semana para ver os recortes ao longo dos dias</div>
       <div id="graf-temporal"><div class="box-vazio">sem dados</div></div>
-      <div class="legenda" id="leg-temporal"></div>
+      <div class="linhas-wrap" id="linhas-wrap" style="display:none">
+        <div class="linhas-head">
+          <span class="linhas-titulo" id="linhas-titulo"></span>
+          <button class="linhas-fechar" id="linhas-fechar">fechar</button>
+        </div>
+        <div id="graf-linhas"></div>
+        <div class="legenda" id="leg-linhas"></div>
+      </div>
     </div>
     <div class="graf">
       <h3>mecanismos de IA</h3>
@@ -300,6 +318,20 @@ const TONS_VALENCIA = {
 };
 const corValencia = v => TONS_VALENCIA[v] || "#C9C9D6";
 
+// paleta forte e bonita para as linhas dos recortes (uma cor por recorte)
+const CORES_RECORTE_LINHA = {
+  "Regulação e TSE": "#4945FE",
+  "Deepfakes e conteúdo sintético": "#E63946",
+  "Desinformação e checagem": "#F77F00",
+  "Plataformas e chatbots": "#06A77D",
+  "Campanhas e candidatos": "#9B5DE5",
+  "Integridade e democracia": "#118AB2",
+};
+const corRecorteLinha = e => CORES_RECORTE_LINHA[e] || "#4945FE";
+
+// semana atualmente aberta no gráfico de linhas (timestamp do domingo) ou null
+let semanaAberta = null;
+
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
 
@@ -307,6 +339,7 @@ let dados = [];
 let recorteAtivo = null;             // null = todos os recortes
 let filtros = { mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
 let filtroFonteClick = null;
+let filtroSemana = null; // timestamp do domingo da semana filtrada, ou null
 const limpa = s => (s||"").replace(/"/g,'');
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
@@ -333,6 +366,10 @@ function filtrar(){
     if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
     if(ffonte && d.fonte!==ffonte) return false;
     if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
+    if(filtroSemana){
+      const dt=parseData(d.data_pub);
+      if(!dt || inicioSemana(dt).getTime()!==filtroSemana) return false;
+    }
     return true;
   });
 }
@@ -370,13 +407,15 @@ function desenharFiltrosAtivos(){
   let html="";
   for(const campo in filtros){ if(filtros[campo]) html+=`<span class="fa-pill" data-tipo="dim" data-campo="${campo}">${filtros[campo]} <span class="x">×</span></span>`; }
   if(filtroFonteClick){ html+=`<span class="fa-pill" data-tipo="fonte">${filtroFonteClick} <span class="x">×</span></span>`; }
+  if(filtroSemana){ const ini=new Date(filtroSemana); const fim=new Date(filtroSemana); fim.setDate(fim.getDate()+6); html+=`<span class="fa-pill" data-tipo="semana">semana ${rotuloSemana(ini)}–${rotuloSemana(fim)} <span class="x">×</span></span>`; }
   pills.innerHTML=html;
-  const algum = filtroFonteClick || Object.values(filtros).some(Boolean);
+  const algum = filtroFonteClick || filtroSemana || Object.values(filtros).some(Boolean);
   faixa.classList.toggle("ativo", !!algum);
   pills.querySelectorAll(".fa-pill").forEach(p=>{
     p.addEventListener("click",()=>{
       if(p.dataset.tipo==="fonte") filtroFonteClick=null;
       if(p.dataset.tipo==="dim") filtros[p.dataset.campo]=null;
+      if(p.dataset.tipo==="semana"){ filtroSemana=null; semanaAberta=null; }
       sincronizarChipsDim();
       render();
     });
@@ -435,40 +474,140 @@ function desenharHBars(elId, itens, campo){
 // área empilhada: semanas x valência
 function desenharTemporal(lista){
   const cont=document.getElementById("graf-temporal");
-  const leg=document.getElementById("leg-temporal");
-  const comData=lista.filter(d=>parseData(d.data_pub));
-  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem matérias com data no recorte atual</div>`; leg.innerHTML=""; return; }
+  // recalcula a lista sem o filtro de semana, para as barras mostrarem todas as semanas
+  const semFiltroSemana = recalcularSemSemana();
+  const comData=semFiltroSemana.filter(d=>parseData(d.data_pub));
+  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem matérias com data no recorte atual</div>`; fecharLinhas(); return; }
   const minD=inicioSemana(new Date(Math.min(...comData.map(d=>parseData(d.data_pub)))));
   const maxD=inicioSemana(new Date(Math.max(...comData.map(d=>parseData(d.data_pub)))));
   let semanas=[];
-  for(let t=new Date(minD); t<=maxD; t.setDate(t.getDate()+7)){ semanas.push({ini:new Date(t), val:{}}); }
-  // limita às últimas 20 semanas para as colunas não ficarem invisíveis
+  for(let t=new Date(minD); t<=maxD; t.setDate(t.getDate()+7)){ semanas.push({ini:new Date(t), qtd:0}); }
   const MAX_SEMANAS=20;
   if(semanas.length>MAX_SEMANAS) semanas=semanas.slice(-MAX_SEMANAS);
   const primeira=semanas[0].ini.getTime();
-  const vals=Object.keys(TONS_VALENCIA);
   comData.forEach(d=>{
     const ini=inicioSemana(parseData(d.data_pub)).getTime();
-    if(ini<primeira) return; // fora da janela exibida
+    if(ini<primeira) return;
     const s=semanas.find(x=>x.ini.getTime()===ini);
-    if(s){ const v=d.valencia_dominante||"não classificável"; s.val[v]=(s.val[v]||0)+1; }
+    if(s) s.qtd++;
   });
-  const ALTURA_PX=120; // altura útil das barras
-  const maxTotal=Math.max(...semanas.map(s=>Object.values(s.val).reduce((a,b)=>a+b,0)),1);
+  const ALTURA_PX=120;
+  const maxTotal=Math.max(...semanas.map(s=>s.qtd),1);
   cont.innerHTML=`<div class="stack">${semanas.map(s=>{
-    const total=Object.values(s.val).reduce((a,b)=>a+b,0);
-    const alturaCol=total? Math.max((total/maxTotal)*ALTURA_PX, 3) : 0; // px, mínimo 3
-    const segs=vals.filter(v=>s.val[v]).map(v=>{
-      const hpx=(s.val[v]/total)*alturaCol;
-      return `<div class="stack-seg" style="height:${hpx}px;background:${corValencia(v)}" title="semana de ${rotuloSemana(s.ini)} — ${v}: ${s.val[v]}"></div>`;
-    }).join("");
-    return `<div class="stack-wrap" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0">
-      <div class="stack-col" style="height:${ALTURA_PX}px;justify-content:flex-end">${segs}</div>
+    const hpx=s.qtd? Math.max((s.qtd/maxTotal)*ALTURA_PX,3):0;
+    const sel=(filtroSemana===s.ini.getTime())?" sel":"";
+    return `<div class="stack-wrap${sel}" data-semana="${s.ini.getTime()}" title="semana de ${rotuloSemana(s.ini)}: ${s.qtd} matéria(s) — clique para abrir">
+      <span class="stack-num">${s.qtd||""}</span>
+      <div class="stack-col" style="height:${ALTURA_PX}px"><div class="stack-bar" style="height:${hpx}px"></div></div>
       <span class="stack-lbl">${rotuloSemana(s.ini)}</span>
     </div>`;
   }).join("")}</div>`;
-  const presentes=vals.filter(v=>semanas.some(s=>s.val[v]));
-  leg.innerHTML=presentes.map(v=>`<span class="leg-item"><span class="sw" style="background:${corValencia(v)}"></span>${v}</span>`).join("");
+  cont.querySelectorAll(".stack-wrap").forEach(col=>{
+    col.addEventListener("click",()=>{
+      const t=Number(col.dataset.semana);
+      if(filtroSemana===t){ filtroSemana=null; semanaAberta=null; fecharLinhas(); }
+      else { filtroSemana=t; semanaAberta=t; }
+      render();
+    });
+  });
+  // se há semana aberta, desenha o gráfico de linhas
+  if(semanaAberta){ desenharLinhasSemana(semanaAberta); }
+  else { fecharLinhas(); }
+}
+
+// recalcula a lista aplicando todos os filtros MENOS o de semana
+function recalcularSemSemana(){
+  const q=document.getElementById("q").value.toLowerCase().trim();
+  const ffonte=document.getElementById("filtro-fonte").value;
+  return dados.filter(d=>{
+    if(recorteAtivo && d.recorte!==recorteAtivo) return false;
+    for(const campo in filtros){ if(!casaDim(d, campo, filtros[campo])) return false; }
+    if(q && !(d.titulo||"").toLowerCase().includes(q)) return false;
+    if(ffonte && d.fonte!==ffonte) return false;
+    if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
+    return true;
+  });
+}
+
+function fecharLinhas(){
+  const w=document.getElementById("linhas-wrap");
+  if(w) w.style.display="none";
+}
+
+// gráfico de linhas: cada recorte ao longo dos 7 dias da semana clicada
+function desenharLinhasSemana(iniTs){
+  const wrap=document.getElementById("linhas-wrap");
+  const cont=document.getElementById("graf-linhas");
+  const leg=document.getElementById("leg-linhas");
+  const titulo=document.getElementById("linhas-titulo");
+  const ini=new Date(iniTs);
+  const fim=new Date(iniTs); fim.setDate(fim.getDate()+6);
+  titulo.textContent=`recortes na semana de ${rotuloSemana(ini)} a ${rotuloSemana(fim)}`;
+
+  // matérias da semana (respeitando recorte/dimensões/fonte, mas todos os recortes para comparar linhas)
+  const base=recalcularSemSemana().filter(d=>{
+    const dt=parseData(d.data_pub);
+    return dt && inicioSemana(dt).getTime()===iniTs;
+  });
+
+  // dias da semana: domingo(0) a sábado(6)
+  const dias=[]; for(let i=0;i<7;i++){ const dd=new Date(iniTs); dd.setDate(dd.getDate()+i); dias.push(dd); }
+  const rotDias=["dom","seg","ter","qua","qui","sex","sáb"];
+
+  // recortes presentes na semana
+  const recortes=[...new Set(base.map(d=>d.recorte).filter(Boolean))];
+  // se um recorte está ativo, mostra só ele; senão todos
+  const recortesMostrar = recorteAtivo ? recortes.filter(r=>r===recorteAtivo) : recortes;
+  if(!base.length || !recortesMostrar.length){
+    wrap.style.display="block";
+    cont.innerHTML=`<div class="box-vazio">nenhuma matéria nesta semana</div>`;
+    leg.innerHTML="";
+    return;
+  }
+
+  // série por recorte: contagem por dia
+  const series={};
+  recortesMostrar.forEach(r=>{ series[r]=new Array(7).fill(0); });
+  base.forEach(d=>{
+    if(!series[d.recorte]) return;
+    const dt=parseData(d.data_pub);
+    const idx=Math.floor((dt - ini)/(1000*60*60*24));
+    if(idx>=0 && idx<7) series[d.recorte][idx]++;
+  });
+
+  // dimensões do SVG
+  const W=820, H=240, padL=34, padR=16, padT=16, padB=34;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const maxY=Math.max(1, ...Object.values(series).flat());
+  const x=i=>padL + (plotW*(i/6));
+  const y=v=>padT + plotH*(1 - v/maxY);
+
+  // grades horizontais
+  const ticks=Math.min(maxY,4);
+  let grid="";
+  for(let g=0; g<=ticks; g++){
+    const val=Math.round((maxY/ticks)*g);
+    const yy=y(val);
+    grid+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#E4E4EA" stroke-width="1"/>`;
+    grid+=`<text x="${padL-8}" y="${yy+3}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#6B6B78">${val}</text>`;
+  }
+  // rótulos de dias no eixo X
+  let eixoX="";
+  dias.forEach((dd,i)=>{
+    eixoX+=`<text x="${x(i)}" y="${H-padB+18}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6B6B78">${rotDias[i]}</text>`;
+  });
+  // linhas e pontos
+  let paths="";
+  recortesMostrar.forEach(r=>{
+    const cor=corRecorteLinha(r);
+    const pts=series[r].map((v,i)=>`${x(i)},${y(v)}`);
+    paths+=`<polyline points="${pts.join(" ")}" fill="none" stroke="${cor}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    series[r].forEach((v,i)=>{ paths+=`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${cor}"/>`; });
+  });
+
+  wrap.style.display="block";
+  cont.innerHTML=`<svg class="linhas-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${grid}${eixoX}${paths}</svg>`;
+  leg.innerHTML=recortesMostrar.map(r=>`<span class="leg-item"><span class="sw" style="background:${corRecorteLinha(r)}"></span>${r}</span>`).join("");
 }
 
 // dimensões disponíveis no cruzamento e se são multivaloradas
@@ -645,7 +784,7 @@ function montarRecortes(recortes){
 function abrirRecorte(recorte){
   recorteAtivo=recorte;
   filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
-  filtroFonteClick=null;
+  filtroFonteClick=null; filtroSemana=null; semanaAberta=null;
   document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on",(ch.dataset.recorte||null)===recorte));
   montarDims();
   render();
@@ -677,7 +816,10 @@ Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
 document.getElementById("fa-limpar").addEventListener("click",()=>{
   aplicarCruzamento(null);
   filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
-  filtroFonteClick=null; sincronizarChipsDim(); render();
+  filtroFonteClick=null; filtroSemana=null; semanaAberta=null; sincronizarChipsDim(); render();
+});
+document.getElementById("linhas-fechar").addEventListener("click",()=>{
+  filtroSemana=null; semanaAberta=null; render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 // trocar dimensão do cruzamento limpa a seleção anterior e redesenha
