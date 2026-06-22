@@ -287,18 +287,18 @@ const RECORTES_LISTA = [
 ];
 const corRecorte = e => "#4945FE";
 
-// paleta categórica harmônica para o gráfico de volume (valências)
-// tons saturados mas equilibrados, legíveis lado a lado
+// paleta para o gráfico de volume (valências), amostrada da escala plasma
+// progressão roxo-escuro → magenta → laranja → amarelo
 const TONS_VALENCIA = {
-  "caso concreto": "#4945FE",
-  "regulação": "#00A6A6",
-  "alerta": "#F2A541",
-  "análise": "#8C5BE0",
-  "ceticismo": "#E26D5C",
-  "otimismo": "#4CAF82",
-  "não classificável": "#C4C4D4",
+  "caso concreto": "#0D0887",
+  "regulação": "#6A00A8",
+  "alerta": "#B12A90",
+  "análise": "#E16462",
+  "ceticismo": "#FCA636",
+  "otimismo": "#F0F921",
+  "não classificável": "#C9C9D6",
 };
-const corValencia = v => TONS_VALENCIA[v] || "#C4C4D4";
+const corValencia = v => TONS_VALENCIA[v] || "#C9C9D6";
 
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
