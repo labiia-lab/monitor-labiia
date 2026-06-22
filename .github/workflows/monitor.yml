@@ -3,10 +3,11 @@ on:
   schedule:
     - cron: "0 */12 * * *"
   workflow_dispatch:
-
 permissions:
   contents: write
-
+concurrency:
+  group: "monitor-coletor"
+  cancel-in-progress: false
 jobs:
   coletar:
     runs-on: ubuntu-latest
