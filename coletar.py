@@ -45,6 +45,13 @@ RECORTES = {
     ],
 }
 
+# ---------------------------------------------------------------------------
+# CODEBOOK LÉXICO (subconjunto operacional do protocolo de 21 campos)
+# Cada dimensão tem categorias; cada categoria tem termos de correspondência.
+# Conservador por construção: marca só o que aparece explícito no título.
+# A coleta usa só o título (RSS não traz corpo), então mantém-se enxuto.
+# ---------------------------------------------------------------------------
+
 MECANISMOS = {
     "deepfake": ["deepfake", "deep fake", "vídeo falso", "video falso", "áudio falso", "audio falso", "conteúdo sintético", "conteudo sintetico", "face swap", "clonagem de voz"],
     "chatbot": ["chatbot", "chatgpt", "gemini", "ia generativa", "assistente virtual", "copilot"],
@@ -127,6 +134,9 @@ def classificar(titulo):
     agentes = _marcar(t, AGENTES)
     valencias = _marcar(t, VALENCIA)
 
+    # valência dominante. "caso concreto" tem precedência sobre "regulação"
+    # quando há verbo de ação (remove, suspende, circula), porque o relatório
+    # distingue anúncio de norma de uso/abuso/punição efetivos.
     ordem_val = ["caso concreto", "regulação", "alerta", "análise", "ceticismo", "otimismo"]
     val_dominante = next((v for v in ordem_val if v in valencias), "não classificável")
 
@@ -141,7 +151,6 @@ def classificar(titulo):
         "agente_principal": ag_principal,
         "valencias": "|".join(valencias),
         "valencia_dominante": val_dominante,
-        "tem_deepfake": "sim" if "deepfake" in mecanismos else "não",
         "confianca": "baixa" if not (mecanismos or plataformas or valencias) else "ok",
     }
 
@@ -189,7 +198,7 @@ if os.path.exists(arquivo):
 
     # reclassifica linhas antigas que não tenham as colunas do codebook
     if "valencia_dominante" not in df.columns or df["valencia_dominante"].isna().any():
-        cols_cb = ["mecanismos","plataformas","agentes","agente_principal","valencias","valencia_dominante","tem_deepfake","confianca"]
+        cols_cb = ["mecanismos","plataformas","agentes","agente_principal","valencias","valencia_dominante","confianca"]
         for c in cols_cb:
             if c not in df.columns:
                 df[c] = None
@@ -206,5 +215,14 @@ else:
     df = novo.drop_duplicates(subset="link")
 
 os.makedirs("dados", exist_ok=True)
+
+# garante que só matérias com recorte de eleições fiquem no corpus
+if "recorte" in df.columns:
+    antes = len(df)
+    df = df[df["recorte"].notna() & (df["recorte"].astype(str).str.strip() != "")]
+    fora_escopo = antes - len(df)
+else:
+    fora_escopo = 0
+
 df.to_csv(arquivo, index=False)
-print(f"{len(novo)} novas | {len(df)} no total | descartadas: {descartadas_ano} por ano, {descartadas_fonte} por fonte")
+print(f"{len(novo)} novas | {len(df)} no total | descartadas: {descartadas_ano} por ano, {descartadas_fonte} por fonte, {fora_escopo} fora de escopo")
