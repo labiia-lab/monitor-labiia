@@ -3,58 +3,90 @@ from urllib.parse import quote, urlparse
 import pandas as pd
 from datetime import datetime, timezone
 
-#keywords e eixos
-EIXOS = {
-    "IA e Método": [
-        '"inteligência artificial" pesquisa',
-        '"IA generativa"',
-        '"modelos de linguagem"',
-        '"aprendizado de máquina" ciência',
-        '"métodos computacionais" "inteligência artificial"',
+RECORTES = {
+    "Regulação e TSE": [
+        '"inteligência artificial" eleições TSE',
+        '"IA" resolução eleitoral',
+        '"justiça eleitoral" inteligência artificial',
+        '"TSE" deepfake',
+        '"propaganda eleitoral" inteligência artificial',
     ],
-    "Eleições": [
-        '"inteligência artificial" eleições',
+    "Deepfakes e conteúdo sintético": [
         '"deepfake" eleição',
+        '"deepfake" candidato',
+        '"vídeo falso" inteligência artificial eleição',
+        '"áudio falso" candidato',
+        '"conteúdo sintético" eleitoral',
+    ],
+    "Desinformação e checagem": [
         '"IA" desinformação eleitoral',
+        '"inteligência artificial" fake news eleição',
+        '"checagem" inteligência artificial eleição',
+        '"desinformação" campanha inteligência artificial',
+    ],
+    "Plataformas e chatbots": [
+        '"chatbot" eleição',
+        '"ChatGPT" eleição candidato',
+        '"redes sociais" inteligência artificial eleição',
+        '"WhatsApp" desinformação eleição',
+        '"IA generativa" campanha política',
+    ],
+    "Campanhas e candidatos": [
         '"inteligência artificial" campanha política',
+        '"IA" marketing eleitoral',
+        '"candidato" inteligência artificial campanha',
+        '"segmentação" eleitores inteligência artificial',
+    ],
+    "Integridade e democracia": [
         '"IA" integridade eleitoral',
-    ],
-    "Sustentabilidade": [
-        '"inteligência artificial" clima',
-        '"IA" sustentabilidade',
-        '"inteligência artificial" meio ambiente',
-        '"IA" transição energética',
-        '"inteligência artificial" monitoramento ambiental',
-    ],
-    "Democracia": [
-        '"inteligência artificial" democracia',
-        '"IA" esfera pública',
-        '"inteligência artificial" políticas públicas',
-        '"IA" participação cidadã',
-        '"inteligência artificial" transparência governo',
-    ],
-    "Ética e Regulação": [
-        '"ética" "inteligência artificial"',
-        '"regulação" "inteligência artificial"',
-        '"governança de IA"',
-        '"viés algorítmico"',
-        '"inteligência artificial" proteção de dados',
-    ],
-    "Sociedade e Cultura": [
-        '"inteligência artificial" sociedade',
-        '"IA" desigualdade',
-        '"inteligência artificial" trabalho',
-        '"IA" educação',
-        '"inteligência artificial" cultura',
+        '"inteligência artificial" urnas',
+        '"inteligência artificial" democracia eleição',
+        '"manipulação" eleitoral inteligência artificial',
     ],
 }
 
-#filtros
-ANO_MINIMO = 2026   
+MECANISMOS = {
+    "deepfake": ["deepfake", "deep fake", "vídeo falso", "video falso", "áudio falso", "audio falso", "conteúdo sintético", "conteudo sintetico", "face swap", "clonagem de voz"],
+    "chatbot": ["chatbot", "chatgpt", "gemini", "ia generativa", "assistente virtual", "copilot"],
+    "microtargeting": ["microtargeting", "micro-targeting", "segmentação", "segmentacao", "psicográfico", "psicografico", "dark post"],
+    "bots": ["bot", "bots", "automação", "automacao", "perfil falso", "perfis falsos", "rede de perfis"],
+    "copywriting": ["copywriting", "geração de texto", "geracao de texto", "redação automática", "texto por ia"],
+    "recomendacao": ["recomendação", "recomendacao", "algoritmo de recomendação", "ranqueia", "ranking", "prioriza"],
+    "auditoria": ["auditoria", "fiscalização", "fiscalizacao", "rotulagem", "identificação de ia", "selo", "marca d'água", "watermark"],
+}
 
-#bloqueio de estrangeiros em pt
+PLATAFORMAS = {
+    "WhatsApp": ["whatsapp", "zap"],
+    "Telegram": ["telegram"],
+    "TikTok": ["tiktok", "tik tok"],
+    "X/Twitter": [" x ", "twitter", " x,", " x.", " x:"],
+    "Meta": ["facebook", "instagram", "meta ", "reels"],
+    "YouTube": ["youtube", "yt "],
+    "Kwai": ["kwai"],
+    "IA nativa": ["chatgpt", "gemini", "openai", "copilot", "grok"],
+}
+
+AGENTES = {
+    "Estado": ["tse", "tre", "tre-", "justiça eleitoral", "justica eleitoral", "supremo", "stf", "ministro", "governo", "procuradoria", "ministério público", "ministerio publico"],
+    "Plataforma": ["meta", "google", "openai", "tiktok", "big tech", "plataforma"],
+    "Campanha": ["candidato", "campanha", "pré-candidato", "pre-candidato", "partido", "marqueteiro"],
+    "Sociedade civil": ["ong", "organização", "organizacao", "instituto", "associação", "associacao", "its rio", "artigo 19", "conectas"],
+    "Cidadão": ["eleitor", "cidadão", "cidadao", "usuário", "usuario", "internauta"],
+    "Estrangeiro": ["estados unidos", "eua", "união europeia", "uniao europeia", "internacional", "outro país", "outro pais"],
+}
+
+VALENCIA = {
+    "regulação": ["tse", "resolução", "resolucao", "norma", "regra", "lei", "proíbe", "proibe", "aprova", "regulamenta", "decisão", "decisao", "obriga", "veta"],
+    "caso concreto": ["remove", "remoção", "remocao", "suspende", "condena", "multa", "flagra", "flagrante", "viral", "circula", "circulou", "denúncia", "denuncia", "ação", "acao"],
+    "alerta": ["risco", "ameaça", "ameaca", "perigo", "preocupa", "alerta", "vulnerável", "vulneravel"],
+    "análise": ["análise", "analise", "estudo", "pesquisa", "entenda", "como funciona", "por que", "diagnóstico", "diagnostico"],
+    "ceticismo": ["fracasso", "falha", "ineficaz", "não funciona", "nao funciona", "limite", "questiona"],
+    "otimismo": ["oportunidade", "benefício", "beneficio", "potencial", "avanço", "avanco", "ajuda"],
+}
+
+ANO_MINIMO = 2026
+
 FONTES_BLOQUEADAS = [
-    # Portugal
     "publico.pt", "observador.pt", "expresso.pt", "sapo.pt", "rtp.pt",
     "dn.pt", "jn.pt", "cmjornal", "eco.sapo", "jornaldenegocios",
     "tsf.pt", "sicnoticias", "noticiasaominuto",
@@ -77,46 +109,94 @@ def ano_da_data(s):
     except Exception:
         return None
 
-arquivo = "dados/noticias.csv"
+def _texto_norm(s):
+    return " " + (s or "").lower() + " "
 
+def _marcar(texto, dicionario):
+    """Retorna lista de categorias cujos termos aparecem no texto."""
+    achados = []
+    for categoria, termos in dicionario.items():
+        if any(t in texto for t in termos):
+            achados.append(categoria)
+    return achados
+
+def classificar(titulo):
+    t = _texto_norm(titulo)
+    mecanismos = _marcar(t, MECANISMOS)
+    plataformas = _marcar(t, PLATAFORMAS)
+    agentes = _marcar(t, AGENTES)
+    valencias = _marcar(t, VALENCIA)
+
+    ordem_val = ["caso concreto", "regulação", "alerta", "análise", "ceticismo", "otimismo"]
+    val_dominante = next((v for v in ordem_val if v in valencias), "não classificável")
+
+    # agente principal: prioridade Estado > Plataforma > Campanha > demais
+    ordem_ag = ["Estado", "Plataforma", "Campanha", "Sociedade civil", "Cidadão", "Estrangeiro"]
+    ag_principal = next((a for a in ordem_ag if a in agentes), "não identificado")
+
+    return {
+        "mecanismos": "|".join(mecanismos),
+        "plataformas": "|".join(plataformas),
+        "agentes": "|".join(agentes),
+        "agente_principal": ag_principal,
+        "valencias": "|".join(valencias),
+        "valencia_dominante": val_dominante,
+        "tem_deepfake": "sim" if "deepfake" in mecanismos else "não",
+        "confianca": "baixa" if not (mecanismos or plataformas or valencias) else "ok",
+    }
+
+arquivo = "dados/noticias.csv"
 linhas = []
 descartadas_ano = 0
 descartadas_fonte = 0
 
-for eixo, keywords in EIXOS.items():
+for recorte, keywords in RECORTES.items():
     for kw in keywords:
         url = f"https://news.google.com/rss/search?q={quote(kw)}&hl=pt-BR&gl=BR&ceid=BR:pt"
         for e in feedparser.parse(url).entries:
             fonte = e.get("source", {}).get("title", "")
             link = e.link
             data_pub = e.get("published", "")
+            titulo = e.title
 
-            #filtro de origem
             if eh_bloqueada(fonte, link):
                 descartadas_fonte += 1
                 continue
 
-            #filtro de ano
             ano = ano_da_data(data_pub)
             if ano is not None and ano < ANO_MINIMO:
                 descartadas_ano += 1
                 continue
 
-            linhas.append({
-                "eixo": eixo,
+            registro = {
+                "objeto": "Eleições 2026",
+                "recorte": recorte,
                 "keyword": kw,
-                "titulo": e.title,
+                "titulo": titulo,
                 "data_pub": data_pub,
                 "fonte": fonte,
                 "link": link,
                 "coletado_em": datetime.now(timezone.utc).isoformat(),
-            })
+            }
+            registro.update(classificar(titulo))
+            linhas.append(registro)
 
 novo = pd.DataFrame(linhas)
 
 if os.path.exists(arquivo):
     antigo = pd.read_csv(arquivo)
     df = pd.concat([antigo, novo]).drop_duplicates(subset="link", keep="first")
+
+    # reclassifica linhas antigas que não tenham as colunas do codebook
+    if "valencia_dominante" not in df.columns or df["valencia_dominante"].isna().any():
+        cols_cb = ["mecanismos","plataformas","agentes","agente_principal","valencias","valencia_dominante","tem_deepfake","confianca"]
+        for c in cols_cb:
+            if c not in df.columns:
+                df[c] = None
+        faltando = df["valencia_dominante"].isna()
+        df.loc[faltando, cols_cb] = df.loc[faltando, "titulo"].apply(
+            lambda t: pd.Series(classificar(t))
+        )
 
     if "data_pub" in df.columns:
         df = df[df["data_pub"].apply(lambda s: (ano_da_data(s) is None) or (ano_da_data(s) >= ANO_MINIMO))]
