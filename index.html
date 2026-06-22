@@ -98,7 +98,10 @@
 
   /* cruzamento mecanismo x plataforma (mini heatmap) */
   .heat { display: grid; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
-  .heat-cell { padding: 7px 4px; text-align: center; border-radius: 5px; color: var(--ink); }
+  .heat-cell { padding: 7px 4px; text-align: center; border-radius: 5px; color: var(--ink); transition: box-shadow .15s, transform .1s; }
+  .heat-cell.clk { cursor: pointer; }
+  .heat-cell.clk:hover { box-shadow: 0 0 0 2px var(--azul) inset; }
+  .heat-cell.sel { box-shadow: 0 0 0 2px var(--ink) inset; transform: scale(1.02); font-weight: 700; }
   .heat-head { color: var(--ink-soft); font-weight: 700; padding: 6px 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .heat-row-head { color: var(--ink-soft); font-weight: 700; padding: 6px 8px; text-align: right; white-space: nowrap; }
 
@@ -248,28 +251,29 @@ const REPO = "monitor-labiia";
 const BRANCH = "main";
 const CAMINHO_CSV = "dados/noticias.csv";
 
-// cores por recorte (mantém a paleta da marca)
-const CORES_RECORTE = {
-  "Regulação e TSE": "#4945FE",
-  "Deepfakes e conteúdo sintético": "#DF3332",
-  "Desinformação e checagem": "#9A6F0B",
-  "Plataformas e chatbots": "#058299",
-  "Campanhas e candidatos": "#9F45F6",
-  "Integridade e democracia": "#2A8657",
-};
-const corRecorte = e => CORES_RECORTE[e] || "#4945FE";
+// recortes sem cor distinta: tudo no roxo da marca
+const RECORTES_LISTA = [
+  "Regulação e TSE",
+  "Deepfakes e conteúdo sintético",
+  "Desinformação e checagem",
+  "Plataformas e chatbots",
+  "Campanhas e candidatos",
+  "Integridade e democracia",
+];
+const corRecorte = e => "#4945FE";
 
-// cores por valência (para a área empilhada e barras)
-const CORES_VALENCIA = {
+// valência em tons do mesmo roxo da marca (monocromático)
+// degradê com contraste suficiente, do mais escuro ao mais claro
+const TONS_VALENCIA = {
+  "caso concreto": "#1E1C7A",
   "regulação": "#4945FE",
-  "caso concreto": "#DF3332",
-  "alerta": "#9A6F0B",
-  "análise": "#058299",
-  "ceticismo": "#6B6B78",
-  "otimismo": "#2A8657",
-  "não classificável": "#C4C4CC",
+  "alerta": "#6F6CFF",
+  "análise": "#9491FF",
+  "ceticismo": "#B5B3FF",
+  "otimismo": "#D0CFFF",
+  "não classificável": "#E8E7FF",
 };
-const corValencia = v => CORES_VALENCIA[v] || "#C4C4CC";
+const corValencia = v => TONS_VALENCIA[v] || "#E8E7FF";
 
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
@@ -408,27 +412,33 @@ function desenharTemporal(lista){
   const cont=document.getElementById("graf-temporal");
   const leg=document.getElementById("leg-temporal");
   const comData=lista.filter(d=>parseData(d.data_pub));
-  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; leg.innerHTML=""; return; }
+  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem matérias com data no recorte atual</div>`; leg.innerHTML=""; return; }
   const minD=inicioSemana(new Date(Math.min(...comData.map(d=>parseData(d.data_pub)))));
   const maxD=inicioSemana(new Date(Math.max(...comData.map(d=>parseData(d.data_pub)))));
-  const semanas=[];
+  let semanas=[];
   for(let t=new Date(minD); t<=maxD; t.setDate(t.getDate()+7)){ semanas.push({ini:new Date(t), val:{}}); }
-  const vals=Object.keys(CORES_VALENCIA);
+  // limita às últimas 20 semanas para as colunas não ficarem invisíveis
+  const MAX_SEMANAS=20;
+  if(semanas.length>MAX_SEMANAS) semanas=semanas.slice(-MAX_SEMANAS);
+  const primeira=semanas[0].ini.getTime();
+  const vals=Object.keys(TONS_VALENCIA);
   comData.forEach(d=>{
     const ini=inicioSemana(parseData(d.data_pub)).getTime();
+    if(ini<primeira) return; // fora da janela exibida
     const s=semanas.find(x=>x.ini.getTime()===ini);
     if(s){ const v=d.valencia_dominante||"não classificável"; s.val[v]=(s.val[v]||0)+1; }
   });
+  const ALTURA_PX=120; // altura útil das barras
   const maxTotal=Math.max(...semanas.map(s=>Object.values(s.val).reduce((a,b)=>a+b,0)),1);
   cont.innerHTML=`<div class="stack">${semanas.map(s=>{
     const total=Object.values(s.val).reduce((a,b)=>a+b,0);
-    const altura=Math.round((total/maxTotal)*100);
+    const alturaCol=total? Math.max((total/maxTotal)*ALTURA_PX, 3) : 0; // px, mínimo 3
     const segs=vals.filter(v=>s.val[v]).map(v=>{
-      const h=(s.val[v]/Math.max(total,1))*altura;
-      return `<div class="stack-seg" style="height:${h}%;background:${corValencia(v)}" title="${v}: ${s.val[v]}"></div>`;
+      const hpx=(s.val[v]/total)*alturaCol;
+      return `<div class="stack-seg" style="height:${hpx}px;background:${corValencia(v)}" title="semana de ${rotuloSemana(s.ini)} — ${v}: ${s.val[v]}"></div>`;
     }).join("");
     return `<div class="stack-wrap" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0">
-      <div class="stack-col" style="height:100%">${segs}</div>
+      <div class="stack-col" style="height:${ALTURA_PX}px;justify-content:flex-end">${segs}</div>
       <span class="stack-lbl">${rotuloSemana(s.ini)}</span>
     </div>`;
   }).join("")}</div>`;
@@ -457,11 +467,23 @@ function desenharHeat(lista){
       const v=mat[m][p]; const intensidade = max? v/max : 0;
       const bg = v? `rgba(73,69,254,${0.12+intensidade*0.78})` : "var(--claro)";
       const cor = intensidade>0.55? "#fff" : "var(--ink)";
-      html+=`<div class="heat-cell" style="background:${bg};color:${cor}">${v||""}</div>`;
+      const sel = (filtros.mecanismos===m && filtros.plataformas===p) ? " sel" : "";
+      const clicavel = v>0 ? " clk" : "";
+      html+=`<div class="heat-cell${sel}${clicavel}" data-mec="${m.replace(/"/g,'&quot;')}" data-plat="${p.replace(/"/g,'&quot;')}" style="background:${bg};color:${cor}" title="${m} × ${p}: ${v} matéria(s)${v?' — clique para filtrar':''}">${v||""}</div>`;
     });
   });
   html+=`</div>`;
   cont.innerHTML=html;
+  cont.querySelectorAll(".heat-cell.clk").forEach(cell=>{
+    cell.addEventListener("click",()=>{
+      const m=cell.dataset.mec, p=cell.dataset.plat;
+      const jaSelecionado = (filtros.mecanismos===m && filtros.plataformas===p);
+      if(jaSelecionado){ filtros.mecanismos=null; filtros.plataformas=null; }
+      else { filtros.mecanismos=m; filtros.plataformas=p; }
+      sincronizarChipsDim();
+      render();
+    });
+  });
 }
 
 function desenharTopFontes(visiveis){
@@ -533,7 +555,7 @@ function sincronizarChipsDim(){
 function montarRecortes(recortes){
   const cont=document.getElementById("eixos");
   // primeiro chip = "todos"
-  const todos=`<span class="eixo-chip on" data-recorte="" style="--cor:#15151F"><span class="bola"></span>todos os recortes</span>`;
+  const todos=`<span class="eixo-chip on" data-recorte="" style="--cor:#4945FE"><span class="bola"></span>todos os recortes</span>`;
   cont.innerHTML=todos+recortes.map(e=>{
     const c=corRecorte(e);
     return `<span class="eixo-chip" data-recorte="${e}" style="--cor:${c}"><span class="bola"></span>${e}</span>`;
@@ -554,7 +576,7 @@ function abrirRecorte(recorte){
 
 // ---------- boot ----------
 function popular(){
-  const ordem=Object.keys(CORES_RECORTE);
+  const ordem=RECORTES_LISTA;
   const recortes=[...new Set(dados.map(d=>d.recorte).filter(Boolean))].sort((a,b)=>ordem.indexOf(a)-ordem.indexOf(b));
   const fontes=[...new Set(dados.map(d=>d.fonte).filter(Boolean))].sort();
   montarRecortes(recortes);
