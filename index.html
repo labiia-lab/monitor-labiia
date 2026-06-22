@@ -33,33 +33,41 @@
   .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--azul); background: #4945fe14; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 18px; }
   .section-tag.mt { margin-top: 44px; }
 
-  /* recortes (antigos eixos) */
-  .eixos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
-  .eixo-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px 15px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 8px; }
-  .eixo-chip .bola { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; background: var(--cor); }
-  .eixo-chip:hover { border-color: var(--cor); }
+  /* layout de painel: filtros à esquerda (sticky), conteúdo à direita */
+  .painel { display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 920px) { .painel { grid-template-columns: 1fr; gap: 20px; } }
+  .coluna-filtros { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-right: 4px; }
+  .coluna-filtros::-webkit-scrollbar { width: 6px; }
+  .coluna-filtros::-webkit-scrollbar-thumb { background: var(--linha); border-radius: 3px; }
+  @media (max-width: 920px) { .coluna-filtros { position: static; } }
+  .coluna-filtros .section-tag.mt { margin-top: 26px; }
+  .coluna-conteudo { min-width: 0; }
+
+  /* recortes empilhados verticalmente na coluna estreita */
+  .eixos { display: flex; flex-direction: column; gap: 7px; margin-bottom: 4px; }
+  .eixo-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: flex; align-items: center; gap: 9px; }
+  .eixo-chip .bola { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--cor); }
+  .eixo-chip:hover { border-color: var(--cor); background: var(--claro); }
   .eixo-chip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
   .eixo-chip.on .bola { background: var(--branco); }
 
-  /* dimensões de análise como filtros (mecanismo, plataforma, agente, valência) */
-  .dims { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 26px; }
-  @media (max-width: 720px) { .dims { grid-template-columns: 1fr; } }
-  .dim-painel { border: 1px solid var(--linha); border-radius: 14px; padding: 16px 18px; background: var(--claro); }
-  .dim-painel .titulo { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  /* dimensões empilhadas, uma por linha na coluna estreita */
+  .dims { display: flex; flex-direction: column; gap: 12px; margin-bottom: 4px; }
+  .dim-painel { border: 1px solid var(--linha); border-radius: 12px; padding: 13px 15px; background: var(--claro); }
+  .dim-painel .titulo { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
   .dim-painel .titulo::before { content: "//"; color: var(--azul); }
-  .dim-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-  .dimchip { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 6px; }
+  .dim-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .dimchip { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 11px; border-radius: 99px; border: 1.5px solid var(--linha); background: var(--branco); color: var(--ink-soft); cursor: pointer; transition: all .15s; user-select: none; display: inline-flex; align-items: center; gap: 5px; }
   .dimchip:hover { border-color: var(--azul); }
   .dimchip .c { font-size: 10px; color: var(--ink-soft); }
   .dimchip.on { background: var(--azul); border-color: var(--azul); color: var(--branco); }
   .dimchip.on .c { color: #dcdbff; }
 
-  .controls { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin-bottom: 22px; align-items: center; }
-  @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } }
-  .search { position: relative; }
-  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px 13px 44px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; }
+  .search { position: relative; margin-bottom: 10px; }
+  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 12px 14px 12px 40px; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; }
   .search input:focus { border-color: var(--azul); }
   .search input::placeholder { color: var(--ink-soft); }
+  .coluna-filtros select#filtro-fonte { width: 100%; }
   .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); }
   select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; }
   select:focus { border-color: var(--azul); }
@@ -89,23 +97,16 @@
   .stack { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-top: 8px; }
   .stack-wrap { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; cursor: pointer; }
   .stack-col { display: flex; flex-direction: column; justify-content: flex-end; }
-  .stack-bar { width: 100%; background: var(--azul); border-radius: 6px 6px 0 0; transition: opacity .15s, box-shadow .15s; min-height: 3px; }
-  .stack-wrap:hover .stack-bar { opacity: .8; }
-  .stack-wrap.sel .stack-bar { box-shadow: 0 0 0 2px var(--ink) inset; }
-  .stack-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); text-align: center; margin-bottom: 4px; }
-  .stack-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); text-align: center; margin-top: 6px; white-space: nowrap; transform: rotate(-35deg); transform-origin: center; }
-  .stack-wrap.sel .stack-lbl { color: var(--azul); font-weight: 700; }
-
-  /* gráfico de linhas: recortes ao longo dos dias da semana clicada */
-  .linhas-wrap { margin-top: 22px; border-top: 1px solid var(--linha); padding-top: 18px; }
-  .linhas-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .linhas-titulo { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); }
-  .linhas-fechar { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: none; border: 1px solid var(--linha); color: var(--ink-soft); padding: 4px 11px; border-radius: 7px; cursor: pointer; }
-  .linhas-fechar:hover { border-color: var(--azul); color: var(--azul); }
-  .linhas-svg { width: 100%; height: auto; display: block; margin-top: 8px; }
-  .legenda { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 16px; }
-  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; }
-  .leg-item .sw { width: 14px; height: 3px; border-radius: 2px; }
+  .stack-bar { width: 100%; background: var(--azul); border-radius: 6px 6px 0 0; transition: background .15s, opacity .15s, transform .12s; min-height: 3px; }
+  .stack-wrap:hover .stack-bar { opacity: .85; }
+  .stack-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); text-align: center; margin-bottom: 4px; transition: color .15s, font-weight .15s; }
+  .stack-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); text-align: center; margin-top: 6px; white-space: nowrap; transform: rotate(-35deg); transform-origin: center; transition: color .15s; }
+  /* quando há uma semana selecionada, as demais ficam claras e a ativa escura */
+  .stack.tem-sel .stack-bar { background: #C4C2FF; }
+  .stack.tem-sel .stack-wrap.sel .stack-bar { background: #2422A8; transform: scaleY(1.04); transform-origin: bottom; }
+  .stack.tem-sel .stack-wrap.sel .stack-num { color: #2422A8; font-weight: 700; }
+  .stack.tem-sel .stack-wrap.sel .stack-lbl { color: #2422A8; font-weight: 700; }
+  .stack.tem-sel .stack-wrap:not(.sel):hover .stack-bar { background: #A8A6FF; }
 
   /* cruzamento mecanismo x plataforma (mini heatmap) */
   .heat-controls { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -142,6 +143,7 @@
   /* coluna resumo */
   .stats-side { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 18px; }
   .box { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; }
+  .box.mt { margin-top: 26px; }
   .box h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 16px; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
   .box h3::before { content: "//"; color: var(--azul); }
   .fontes-list { display: flex; flex-direction: column; gap: 9px; }
@@ -188,101 +190,93 @@
 </div>
 
 <div class="wrap">
-  <div class="section-tag">&lt;recortes de coleta/&gt;</div>
-  <div class="eixos" id="eixos"></div>
+  <div class="painel">
+    <aside class="coluna-filtros" id="coluna-filtros">
+      <div class="section-tag">&lt;recortes/&gt;</div>
+      <div class="eixos" id="eixos"></div>
 
-  <div class="section-tag mt">&lt;dimensões de análise/&gt;</div>
-  <div class="dims" id="dims"></div>
-
-  <div class="controls">
-    <div class="search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="q" placeholder="Buscar no título...">
-    </div>
-    <select id="filtro-fonte"><option value="">Todas as fontes</option></select>
-  </div>
-
-  <div class="filtros-ativos" id="filtros-ativos">
-    <span class="fa-label">filtros:</span>
-    <span id="fa-pills"></span>
-    <button class="fa-limpar" id="fa-limpar">limpar tudo</button>
-  </div>
-
-  <div class="section-tag mt">&lt;análise/&gt;</div>
-  <div class="analise" id="analise">
-    <div class="graf full">
-      <h3>volume por semana</h3>
-      <div class="nota">cada barra é uma semana; clique numa semana para ver os recortes ao longo dos dias</div>
-      <div id="graf-temporal"><div class="box-vazio">sem dados</div></div>
-      <div class="linhas-wrap" id="linhas-wrap" style="display:none">
-        <div class="linhas-head">
-          <span class="linhas-titulo" id="linhas-titulo"></span>
-          <button class="linhas-fechar" id="linhas-fechar">fechar</button>
-        </div>
-        <div id="graf-linhas"></div>
-        <div class="legenda" id="leg-linhas"></div>
+      <div class="section-tag mt">&lt;busca/&gt;</div>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="q" placeholder="Buscar no título...">
       </div>
-    </div>
-    <div class="graf">
-      <h3>mecanismos de IA</h3>
-      <div class="nota">mecanismo de IA citado na matéria; clique para filtrar</div>
-      <div id="graf-mecanismos"><div class="box-vazio">sem dados</div></div>
-    </div>
-    <div class="graf">
-      <h3>plataformas mencionadas</h3>
-      <div class="nota">plataforma citada no título; clique para filtrar</div>
-      <div id="graf-plataformas"><div class="box-vazio">sem dados</div></div>
-    </div>
-    <div class="graf">
-      <h3>agente principal</h3>
-      <div class="nota">quem protagoniza a narrativa</div>
-      <div id="graf-agentes"><div class="box-vazio">sem dados</div></div>
-    </div>
-    <div class="graf">
-      <h3>valência narrativa</h3>
-      <div class="nota">enquadramento dominante da matéria</div>
-      <div id="graf-valencia"><div class="box-vazio">sem dados</div></div>
-    </div>
-    <div class="graf full">
-      <h3>cruzamento entre dimensões</h3>
-      <div class="nota">quantas matérias citam cada par; intensidade da cor proporcional à contagem. clique numa célula para filtrar</div>
-      <div class="heat-controls">
-        <label>linhas
-          <select id="heat-dim1">
-            <option value="mecanismos">mecanismo de IA</option>
-            <option value="plataformas">plataforma</option>
-            <option value="agente_principal">agente principal</option>
-            <option value="valencia_dominante">valência narrativa</option>
-            <option value="recorte">recorte</option>
-          </select>
-        </label>
-        <span class="heat-x">×</span>
-        <label>colunas
-          <select id="heat-dim2">
-            <option value="plataformas">plataforma</option>
-            <option value="mecanismos">mecanismo de IA</option>
-            <option value="agente_principal">agente principal</option>
-            <option value="valencia_dominante">valência narrativa</option>
-            <option value="recorte">recorte</option>
-          </select>
-        </label>
-      </div>
-      <div id="graf-heat"><div class="box-vazio">sem dados</div></div>
-    </div>
-  </div>
+      <select id="filtro-fonte"><option value="">Todas as fontes</option></select>
 
-  <div class="section-tag mt">&lt;matérias/&gt;</div>
-  <div class="layout">
-    <div>
-      <div class="count" id="count"></div>
-      <div id="lista"><div class="state"><div class="spinner"></div>Carregando corpus do repositório...</div></div>
-    </div>
-    <aside class="stats-side" id="stats-side">
-      <div class="box">
+      <div class="section-tag mt">&lt;dimensões/&gt;</div>
+      <div class="dims" id="dims"></div>
+
+      <div class="box mt">
         <h3>top fontes</h3>
         <div class="fontes-list" id="top-fontes"><div class="box-vazio">sem dados</div></div>
       </div>
     </aside>
+
+    <div class="coluna-conteudo">
+      <div class="filtros-ativos" id="filtros-ativos">
+        <span class="fa-label">filtros:</span>
+        <span id="fa-pills"></span>
+        <button class="fa-limpar" id="fa-limpar">limpar tudo</button>
+      </div>
+
+      <div class="section-tag">&lt;análise/&gt;</div>
+      <div class="analise" id="analise">
+        <div class="graf full">
+          <h3>volume por semana</h3>
+          <div class="nota">cada barra é uma semana; clique numa semana para filtrar as matérias daquele período</div>
+          <div id="graf-temporal"><div class="box-vazio">sem dados</div></div>
+        </div>
+        <div class="graf">
+          <h3>mecanismos de IA</h3>
+          <div class="nota">mecanismo de IA citado na matéria; clique para filtrar</div>
+          <div id="graf-mecanismos"><div class="box-vazio">sem dados</div></div>
+        </div>
+        <div class="graf">
+          <h3>plataformas mencionadas</h3>
+          <div class="nota">plataforma citada no título; clique para filtrar</div>
+          <div id="graf-plataformas"><div class="box-vazio">sem dados</div></div>
+        </div>
+        <div class="graf">
+          <h3>agente principal</h3>
+          <div class="nota">quem protagoniza a narrativa</div>
+          <div id="graf-agentes"><div class="box-vazio">sem dados</div></div>
+        </div>
+        <div class="graf">
+          <h3>valência narrativa</h3>
+          <div class="nota">enquadramento dominante da matéria</div>
+          <div id="graf-valencia"><div class="box-vazio">sem dados</div></div>
+        </div>
+        <div class="graf full">
+          <h3>cruzamento entre dimensões</h3>
+          <div class="nota">quantas matérias citam cada par; intensidade da cor proporcional à contagem. clique numa célula para filtrar</div>
+          <div class="heat-controls">
+            <label>linhas
+              <select id="heat-dim1">
+                <option value="mecanismos">mecanismo de IA</option>
+                <option value="plataformas">plataforma</option>
+                <option value="agente_principal">agente principal</option>
+                <option value="valencia_dominante">valência narrativa</option>
+                <option value="recorte">recorte</option>
+              </select>
+            </label>
+            <span class="heat-x">×</span>
+            <label>colunas
+              <select id="heat-dim2">
+                <option value="plataformas">plataforma</option>
+                <option value="mecanismos">mecanismo de IA</option>
+                <option value="agente_principal">agente principal</option>
+                <option value="valencia_dominante">valência narrativa</option>
+                <option value="recorte">recorte</option>
+              </select>
+            </label>
+          </div>
+          <div id="graf-heat"><div class="box-vazio">sem dados</div></div>
+        </div>
+      </div>
+
+      <div class="section-tag mt">&lt;matérias/&gt;</div>
+      <div class="count" id="count"></div>
+      <div id="lista"><div class="state"><div class="spinner"></div>Carregando corpus do repositório...</div></div>
+    </div>
   </div>
 
   <footer>dados via Google News RSS · classificação automática por regras léxicas · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
@@ -317,20 +311,6 @@ const TONS_VALENCIA = {
   "não classificável": "#C9C9D6",
 };
 const corValencia = v => TONS_VALENCIA[v] || "#C9C9D6";
-
-// paleta forte e bonita para as linhas dos recortes (uma cor por recorte)
-const CORES_RECORTE_LINHA = {
-  "Regulação e TSE": "#4945FE",
-  "Deepfakes e conteúdo sintético": "#E63946",
-  "Desinformação e checagem": "#F77F00",
-  "Plataformas e chatbots": "#06A77D",
-  "Campanhas e candidatos": "#9B5DE5",
-  "Integridade e democracia": "#118AB2",
-};
-const corRecorteLinha = e => CORES_RECORTE_LINHA[e] || "#4945FE";
-
-// semana atualmente aberta no gráfico de linhas (timestamp do domingo) ou null
-let semanaAberta = null;
 
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
@@ -415,7 +395,7 @@ function desenharFiltrosAtivos(){
     p.addEventListener("click",()=>{
       if(p.dataset.tipo==="fonte") filtroFonteClick=null;
       if(p.dataset.tipo==="dim") filtros[p.dataset.campo]=null;
-      if(p.dataset.tipo==="semana"){ filtroSemana=null; semanaAberta=null; }
+      if(p.dataset.tipo==="semana"){ filtroSemana=null; }
       sincronizarChipsDim();
       render();
     });
@@ -477,7 +457,7 @@ function desenharTemporal(lista){
   // recalcula a lista sem o filtro de semana, para as barras mostrarem todas as semanas
   const semFiltroSemana = recalcularSemSemana();
   const comData=semFiltroSemana.filter(d=>parseData(d.data_pub));
-  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem matérias com data no recorte atual</div>`; fecharLinhas(); return; }
+  if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem matérias com data no recorte atual</div>`; return; }
   const minD=inicioSemana(new Date(Math.min(...comData.map(d=>parseData(d.data_pub)))));
   const maxD=inicioSemana(new Date(Math.max(...comData.map(d=>parseData(d.data_pub)))));
   let semanas=[];
@@ -493,7 +473,7 @@ function desenharTemporal(lista){
   });
   const ALTURA_PX=120;
   const maxTotal=Math.max(...semanas.map(s=>s.qtd),1);
-  cont.innerHTML=`<div class="stack">${semanas.map(s=>{
+  cont.innerHTML=`<div class="stack${filtroSemana?' tem-sel':''}">${semanas.map(s=>{
     const hpx=s.qtd? Math.max((s.qtd/maxTotal)*ALTURA_PX,3):0;
     const sel=(filtroSemana===s.ini.getTime())?" sel":"";
     return `<div class="stack-wrap${sel}" data-semana="${s.ini.getTime()}" title="semana de ${rotuloSemana(s.ini)}: ${s.qtd} matéria(s) — clique para abrir">
@@ -505,14 +485,10 @@ function desenharTemporal(lista){
   cont.querySelectorAll(".stack-wrap").forEach(col=>{
     col.addEventListener("click",()=>{
       const t=Number(col.dataset.semana);
-      if(filtroSemana===t){ filtroSemana=null; semanaAberta=null; fecharLinhas(); }
-      else { filtroSemana=t; semanaAberta=t; }
+      filtroSemana=(filtroSemana===t)?null:t; // toggle
       render();
     });
   });
-  // se há semana aberta, desenha o gráfico de linhas
-  if(semanaAberta){ desenharLinhasSemana(semanaAberta); }
-  else { fecharLinhas(); }
 }
 
 // recalcula a lista aplicando todos os filtros MENOS o de semana
@@ -527,87 +503,6 @@ function recalcularSemSemana(){
     if(filtroFonteClick && d.fonte!==filtroFonteClick) return false;
     return true;
   });
-}
-
-function fecharLinhas(){
-  const w=document.getElementById("linhas-wrap");
-  if(w) w.style.display="none";
-}
-
-// gráfico de linhas: cada recorte ao longo dos 7 dias da semana clicada
-function desenharLinhasSemana(iniTs){
-  const wrap=document.getElementById("linhas-wrap");
-  const cont=document.getElementById("graf-linhas");
-  const leg=document.getElementById("leg-linhas");
-  const titulo=document.getElementById("linhas-titulo");
-  const ini=new Date(iniTs);
-  const fim=new Date(iniTs); fim.setDate(fim.getDate()+6);
-  titulo.textContent=`recortes na semana de ${rotuloSemana(ini)} a ${rotuloSemana(fim)}`;
-
-  // matérias da semana (respeitando recorte/dimensões/fonte, mas todos os recortes para comparar linhas)
-  const base=recalcularSemSemana().filter(d=>{
-    const dt=parseData(d.data_pub);
-    return dt && inicioSemana(dt).getTime()===iniTs;
-  });
-
-  // dias da semana: domingo(0) a sábado(6)
-  const dias=[]; for(let i=0;i<7;i++){ const dd=new Date(iniTs); dd.setDate(dd.getDate()+i); dias.push(dd); }
-  const rotDias=["dom","seg","ter","qua","qui","sex","sáb"];
-
-  // recortes presentes na semana
-  const recortes=[...new Set(base.map(d=>d.recorte).filter(Boolean))];
-  // se um recorte está ativo, mostra só ele; senão todos
-  const recortesMostrar = recorteAtivo ? recortes.filter(r=>r===recorteAtivo) : recortes;
-  if(!base.length || !recortesMostrar.length){
-    wrap.style.display="block";
-    cont.innerHTML=`<div class="box-vazio">nenhuma matéria nesta semana</div>`;
-    leg.innerHTML="";
-    return;
-  }
-
-  // série por recorte: contagem por dia
-  const series={};
-  recortesMostrar.forEach(r=>{ series[r]=new Array(7).fill(0); });
-  base.forEach(d=>{
-    if(!series[d.recorte]) return;
-    const dt=parseData(d.data_pub);
-    const idx=Math.floor((dt - ini)/(1000*60*60*24));
-    if(idx>=0 && idx<7) series[d.recorte][idx]++;
-  });
-
-  // dimensões do SVG
-  const W=820, H=240, padL=34, padR=16, padT=16, padB=34;
-  const plotW=W-padL-padR, plotH=H-padT-padB;
-  const maxY=Math.max(1, ...Object.values(series).flat());
-  const x=i=>padL + (plotW*(i/6));
-  const y=v=>padT + plotH*(1 - v/maxY);
-
-  // grades horizontais
-  const ticks=Math.min(maxY,4);
-  let grid="";
-  for(let g=0; g<=ticks; g++){
-    const val=Math.round((maxY/ticks)*g);
-    const yy=y(val);
-    grid+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#E4E4EA" stroke-width="1"/>`;
-    grid+=`<text x="${padL-8}" y="${yy+3}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#6B6B78">${val}</text>`;
-  }
-  // rótulos de dias no eixo X
-  let eixoX="";
-  dias.forEach((dd,i)=>{
-    eixoX+=`<text x="${x(i)}" y="${H-padB+18}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6B6B78">${rotDias[i]}</text>`;
-  });
-  // linhas e pontos
-  let paths="";
-  recortesMostrar.forEach(r=>{
-    const cor=corRecorteLinha(r);
-    const pts=series[r].map((v,i)=>`${x(i)},${y(v)}`);
-    paths+=`<polyline points="${pts.join(" ")}" fill="none" stroke="${cor}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-    series[r].forEach((v,i)=>{ paths+=`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${cor}"/>`; });
-  });
-
-  wrap.style.display="block";
-  cont.innerHTML=`<svg class="linhas-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${grid}${eixoX}${paths}</svg>`;
-  leg.innerHTML=recortesMostrar.map(r=>`<span class="leg-item"><span class="sw" style="background:${corRecorteLinha(r)}"></span>${r}</span>`).join("");
 }
 
 // dimensões disponíveis no cruzamento e se são multivaloradas
@@ -746,7 +641,7 @@ function montarDims(){
     const itens=valoresDimensao(dim);
     const chips=itens.map(([v,q])=>{
       const on=(filtros[dim.campo]===v)?" on":"";
-      return `<span class="dimchip${on}" data-campo="${dim.campo}" data-valor="${v.replace(/"/g,'&quot;')}">${v} <span class="c">${q}</span></span>`;
+      return `<span class="dimchip${on}" data-campo="${dim.campo}" data-valor="${v.replace(/"/g,'&quot;')}">${v} <span class="c">(${q})</span></span>`;
     }).join("") || `<span class="box-vazio">sem dados</span>`;
     return `<div class="dim-painel"><div class="titulo">${dim.titulo}</div><div class="dim-chips">${chips}</div></div>`;
   }).join("");
@@ -784,7 +679,7 @@ function montarRecortes(recortes){
 function abrirRecorte(recorte){
   recorteAtivo=recorte;
   filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
-  filtroFonteClick=null; filtroSemana=null; semanaAberta=null;
+  filtroFonteClick=null; filtroSemana=null;
   document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on",(ch.dataset.recorte||null)===recorte));
   montarDims();
   render();
@@ -816,10 +711,7 @@ Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
 document.getElementById("fa-limpar").addEventListener("click",()=>{
   aplicarCruzamento(null);
   filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
-  filtroFonteClick=null; filtroSemana=null; semanaAberta=null; sincronizarChipsDim(); render();
-});
-document.getElementById("linhas-fechar").addEventListener("click",()=>{
-  filtroSemana=null; semanaAberta=null; render();
+  filtroFonteClick=null; filtroSemana=null; sincronizarChipsDim(); render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 // trocar dimensão do cruzamento limpa a seleção anterior e redesenha
