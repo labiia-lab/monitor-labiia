@@ -41,7 +41,7 @@
   .eixo-chip.on { background: var(--cor); border-color: var(--cor); color: var(--branco); }
   .eixo-chip.on .bola { background: var(--branco); }
 
-  /* dimensões do codebook como filtros (mecanismo, plataforma, agente, valência) */
+  /* dimensões de análise como filtros (mecanismo, plataforma, agente, valência) */
   .dims { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 26px; }
   @media (max-width: 720px) { .dims { grid-template-columns: 1fr; } }
   .dim-painel { border: 1px solid var(--linha); border-radius: 14px; padding: 16px 18px; background: var(--claro); }
@@ -97,6 +97,10 @@
   .leg-item .sw { width: 11px; height: 11px; border-radius: 3px; }
 
   /* cruzamento mecanismo x plataforma (mini heatmap) */
+  .heat-controls { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .heat-controls label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 5px; }
+  .heat-controls select { min-width: 150px; padding: 8px 12px; font-size: 12px; }
+  .heat-controls .heat-x { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--azul); padding-bottom: 9px; }
   .heat { display: grid; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
   .heat-cell { padding: 7px 4px; text-align: center; border-radius: 5px; color: var(--ink); transition: box-shadow .15s, transform .1s; }
   .heat-cell.clk { cursor: pointer; }
@@ -161,7 +165,7 @@
     <div class="brand">&lt;labiia_lab&gt;</div>
     <div class="tagchip">&lt;monitor IA e eleições 2026/&gt;</div>
     <h1>Inteligência artificial nas eleições brasileiras de 2026</h1>
-    <p class="lede">Monitoramento contínuo da cobertura midiática sobre IA e eleições, classificado pelas dimensões do codebook do LABIIA: recorte temático, mecanismo de IA, plataforma, agente principal e valência narrativa. Atualizado duas vezes ao dia.</p>
+    <p class="lede">Monitoramento contínuo da cobertura midiática sobre IA e eleições, classificado por cinco dimensões: recorte temático, mecanismo de IA, plataforma, agente principal e valência narrativa. Atualizado duas vezes ao dia.</p>
   </div>
 </section>
 
@@ -176,7 +180,7 @@
   <div class="section-tag">&lt;recortes de coleta/&gt;</div>
   <div class="eixos" id="eixos"></div>
 
-  <div class="section-tag mt">&lt;dimensões do codebook/&gt;</div>
+  <div class="section-tag mt">&lt;dimensões de análise/&gt;</div>
   <div class="dims" id="dims"></div>
 
   <div class="controls">
@@ -203,7 +207,7 @@
     </div>
     <div class="graf">
       <h3>mecanismos de IA</h3>
-      <div class="nota">o que o relatório chama de mecanismo; clique para filtrar</div>
+      <div class="nota">mecanismo de IA citado na matéria; clique para filtrar</div>
       <div id="graf-mecanismos"><div class="box-vazio">sem dados</div></div>
     </div>
     <div class="graf">
@@ -222,8 +226,29 @@
       <div id="graf-valencia"><div class="box-vazio">sem dados</div></div>
     </div>
     <div class="graf full">
-      <h3>cruzamento mecanismo × plataforma</h3>
-      <div class="nota">quantas matérias citam cada par; intensidade da cor proporcional à contagem</div>
+      <h3>cruzamento entre dimensões</h3>
+      <div class="nota">quantas matérias citam cada par; intensidade da cor proporcional à contagem. clique numa célula para filtrar</div>
+      <div class="heat-controls">
+        <label>linhas
+          <select id="heat-dim1">
+            <option value="mecanismos">mecanismo de IA</option>
+            <option value="plataformas">plataforma</option>
+            <option value="agente_principal">agente principal</option>
+            <option value="valencia_dominante">valência narrativa</option>
+            <option value="recorte">recorte</option>
+          </select>
+        </label>
+        <span class="heat-x">×</span>
+        <label>colunas
+          <select id="heat-dim2">
+            <option value="plataformas">plataforma</option>
+            <option value="mecanismos">mecanismo de IA</option>
+            <option value="agente_principal">agente principal</option>
+            <option value="valencia_dominante">valência narrativa</option>
+            <option value="recorte">recorte</option>
+          </select>
+        </label>
+      </div>
       <div id="graf-heat"><div class="box-vazio">sem dados</div></div>
     </div>
   </div>
@@ -242,7 +267,7 @@
     </aside>
   </div>
 
-  <footer>dados via Google News RSS · classificação por codebook léxico · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
+  <footer>dados via Google News RSS · classificação automática por regras léxicas · atualização automática por GitHub Actions · <a href="#" id="link-csv">ver CSV bruto</a></footer>
 </div>
 
 <script>
@@ -262,18 +287,18 @@ const RECORTES_LISTA = [
 ];
 const corRecorte = e => "#4945FE";
 
-// valência em tons do mesmo roxo da marca (monocromático)
-// degradê com contraste suficiente, do mais escuro ao mais claro
+// paleta categórica harmônica para o gráfico de volume (valências)
+// tons saturados mas equilibrados, legíveis lado a lado
 const TONS_VALENCIA = {
-  "caso concreto": "#1E1C7A",
-  "regulação": "#4945FE",
-  "alerta": "#6F6CFF",
-  "análise": "#9491FF",
-  "ceticismo": "#B5B3FF",
-  "otimismo": "#D0CFFF",
-  "não classificável": "#E8E7FF",
+  "caso concreto": "#4945FE",
+  "regulação": "#00A6A6",
+  "alerta": "#F2A541",
+  "análise": "#8C5BE0",
+  "ceticismo": "#E26D5C",
+  "otimismo": "#4CAF82",
+  "não classificável": "#C4C4D4",
 };
-const corValencia = v => TONS_VALENCIA[v] || "#E8E7FF";
+const corValencia = v => TONS_VALENCIA[v] || "#C4C4D4";
 
 const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/${CAMINHO_CSV}?t=${Date.now()}`;
 document.getElementById("link-csv").href = CSV_URL;
@@ -365,7 +390,7 @@ function atualizarAnalise(visiveis){
   desenharHBars("graf-mecanismos", contarMulti(visiveis,"mecanismos"), "mecanismos");
   desenharHBars("graf-plataformas", contarMulti(visiveis,"plataformas"), "plataformas");
   desenharHBars("graf-agentes", contarSimples(visiveis,"agente_principal"), "agente_principal");
-  desenharHBars("graf-valencia", contarSimples(visiveis,"valencia_dominante"), "valencia_dominante", true);
+  desenharHBars("graf-valencia", contarSimples(visiveis,"valencia_dominante"), "valencia_dominante");
   desenharHeat(visiveis);
   desenharTopFontes(visiveis);
 }
@@ -381,13 +406,13 @@ function contarSimples(lista, campo){
   return Object.entries(c).sort((a,b)=>b[1]-a[1]);
 }
 
-function desenharHBars(elId, itens, campo, usarCorValencia=false){
+function desenharHBars(elId, itens, campo){
   const cont=document.getElementById(elId);
   if(!itens.length){ cont.innerHTML=`<div class="box-vazio">sem dados</div>`; return; }
   const max=Math.max(...itens.map(i=>i[1]),1);
   cont.innerHTML=`<div class="hbars">${itens.map(([nome,qtd])=>{
     const w=Math.round((qtd/max)*100);
-    const cor = usarCorValencia ? corValencia(nome) : (recorteAtivo ? corRecorte(recorteAtivo) : "#4945FE");
+    const cor = "#4945FE";
     const sel = (filtros[campo]===nome) ? " sel" : "";
     return `<div class="hbar-item${sel}" data-campo="${campo}" data-valor="${nome.replace(/"/g,'&quot;')}">
       <div class="hbar-top">
@@ -446,44 +471,96 @@ function desenharTemporal(lista){
   leg.innerHTML=presentes.map(v=>`<span class="leg-item"><span class="sw" style="background:${corValencia(v)}"></span>${v}</span>`).join("");
 }
 
-// heatmap mecanismo x plataforma
+// dimensões disponíveis no cruzamento e se são multivaloradas
+const DIM_INFO = {
+  "mecanismos":        { rotulo:"mecanismo", multi:true },
+  "plataformas":       { rotulo:"plataforma", multi:true },
+  "agente_principal":  { rotulo:"agente", multi:false, ignora:["não identificado"] },
+  "valencia_dominante":{ rotulo:"valência", multi:false, ignora:["não classificável"] },
+  "recorte":           { rotulo:"recorte", multi:false },
+};
+
+// valores de uma matéria numa dimensão (lista, já filtrando ignorados)
+function valoresDe(d, campo){
+  const info=DIM_INFO[campo];
+  const vs = info.multi ? multi(d[campo]) : [d[campo]].filter(Boolean);
+  return vs.filter(v=>!(info.ignora||[]).includes(v));
+}
+
+// ranking de categorias de uma dimensão dentro da lista
+function topCategorias(lista, campo, n){
+  const c={};
+  lista.forEach(d=>valoresDe(d,campo).forEach(v=>{ c[v]=(c[v]||0)+1; }));
+  return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0]);
+}
+
+// heatmap genérico: cruza duas dimensões escolhidas
 function desenharHeat(lista){
   const cont=document.getElementById("graf-heat");
-  const mecs=contarMulti(lista,"mecanismos").slice(0,5).map(x=>x[0]);
-  const plats=contarMulti(lista,"plataformas").slice(0,5).map(x=>x[0]);
-  if(!mecs.length || !plats.length){ cont.innerHTML=`<div class="box-vazio">sem cruzamentos com dados suficientes</div>`; return; }
+  const d1=document.getElementById("heat-dim1").value;
+  const d2=document.getElementById("heat-dim2").value;
+  if(d1===d2){ cont.innerHTML=`<div class="box-vazio">escolha duas dimensões diferentes</div>`; return; }
+  const linhas=topCategorias(lista,d1,6);
+  const colunas=topCategorias(lista,d2,6);
+  if(!linhas.length || !colunas.length){ cont.innerHTML=`<div class="box-vazio">sem cruzamentos com dados suficientes</div>`; return; }
   const mat={}; let max=0;
-  mecs.forEach(m=>{ mat[m]={}; plats.forEach(p=>{ mat[m][p]=0; }); });
+  linhas.forEach(l=>{ mat[l]={}; colunas.forEach(c=>{ mat[l][c]=0; }); });
   lista.forEach(d=>{
-    const dm=multi(d.mecanismos), dp=multi(d.plataformas);
-    dm.forEach(m=>{ if(mat[m]) dp.forEach(p=>{ if(mat[m][p]!==undefined){ mat[m][p]++; max=Math.max(max,mat[m][p]); } }); });
+    const vl=valoresDe(d,d1), vc=valoresDe(d,d2);
+    vl.forEach(l=>{ if(mat[l]) vc.forEach(c=>{ if(mat[l][c]!==undefined){ mat[l][c]++; max=Math.max(max,mat[l][c]); } }); });
   });
-  const cols=`160px repeat(${plats.length}, 1fr)`;
+  const cols=`160px repeat(${colunas.length}, 1fr)`;
   let html=`<div class="heat" style="grid-template-columns:${cols}">`;
-  html+=`<div></div>`+plats.map(p=>`<div class="heat-head" title="${p}">${p}</div>`).join("");
-  mecs.forEach(m=>{
-    html+=`<div class="heat-row-head">${m}</div>`;
-    plats.forEach(p=>{
-      const v=mat[m][p]; const intensidade = max? v/max : 0;
+  html+=`<div></div>`+colunas.map(c=>`<div class="heat-head" title="${c}">${c}</div>`).join("");
+  linhas.forEach(l=>{
+    html+=`<div class="heat-row-head">${l}</div>`;
+    colunas.forEach(c=>{
+      const v=mat[l][c]; const intensidade = max? v/max : 0;
       const bg = v? `rgba(73,69,254,${0.12+intensidade*0.78})` : "var(--claro)";
       const cor = intensidade>0.55? "#fff" : "var(--ink)";
-      const sel = (filtros.mecanismos===m && filtros.plataformas===p) ? " sel" : "";
+      const sel = (heatSel.d1===d1 && heatSel.d2===d2 && heatSel.l===l && heatSel.c===c) ? " sel" : "";
       const clicavel = v>0 ? " clk" : "";
-      html+=`<div class="heat-cell${sel}${clicavel}" data-mec="${m.replace(/"/g,'&quot;')}" data-plat="${p.replace(/"/g,'&quot;')}" style="background:${bg};color:${cor}" title="${m} × ${p}: ${v} matéria(s)${v?' — clique para filtrar':''}">${v||""}</div>`;
+      html+=`<div class="heat-cell${sel}${clicavel}" data-l="${l.replace(/"/g,'&quot;')}" data-c="${c.replace(/"/g,'&quot;')}" style="background:${bg};color:${cor}" title="${l} × ${c}: ${v} matéria(s)${v?' — clique para filtrar':''}">${v||""}</div>`;
     });
   });
   html+=`</div>`;
   cont.innerHTML=html;
   cont.querySelectorAll(".heat-cell.clk").forEach(cell=>{
     cell.addEventListener("click",()=>{
-      const m=cell.dataset.mec, p=cell.dataset.plat;
-      const jaSelecionado = (filtros.mecanismos===m && filtros.plataformas===p);
-      if(jaSelecionado){ filtros.mecanismos=null; filtros.plataformas=null; }
-      else { filtros.mecanismos=m; filtros.plataformas=p; }
-      sincronizarChipsDim();
+      const l=cell.dataset.l, c=cell.dataset.c;
+      const jaSel = (heatSel.d1===d1 && heatSel.d2===d2 && heatSel.l===l && heatSel.c===c);
+      // limpa qualquer cruzamento anterior
+      aplicarCruzamento(null);
+      if(!jaSel){ aplicarCruzamento({d1,d2,l,c}); }
       render();
     });
   });
+}
+
+// estado do cruzamento selecionado no heatmap
+let heatSel = { d1:null, d2:null, l:null, c:null };
+
+// aplica (ou limpa) um cruzamento como filtros nas dimensões certas
+function aplicarCruzamento(sel){
+  if(!sel){
+    // remove o cruzamento anterior dos filtros
+    if(heatSel.d1 && heatSel.d1!=="recorte") filtros[heatSel.d1]=null;
+    if(heatSel.d2 && heatSel.d2!=="recorte") filtros[heatSel.d2]=null;
+    if(heatSel.d1==="recorte" || heatSel.d2==="recorte") { recorteAtivo=null; sincronizarRecorteChips(); }
+    heatSel={ d1:null, d2:null, l:null, c:null };
+    sincronizarChipsDim();
+    return;
+  }
+  // aplica nas dimensões; recorte vai para recorteAtivo, o resto para filtros
+  if(sel.d1==="recorte"){ recorteAtivo=sel.l; } else { filtros[sel.d1]=sel.l; }
+  if(sel.d2==="recorte"){ recorteAtivo=sel.c; } else { filtros[sel.d2]=sel.c; }
+  heatSel={...sel};
+  sincronizarChipsDim();
+  sincronizarRecorteChips();
+}
+
+function sincronizarRecorteChips(){
+  document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on",(ch.dataset.recorte||null)===recorteAtivo));
 }
 
 function desenharTopFontes(visiveis){
@@ -598,10 +675,16 @@ Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
   error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e o caminho dados/noticias.csv.</div>`; }
 });
 document.getElementById("fa-limpar").addEventListener("click",()=>{
+  aplicarCruzamento(null);
   filtros={ mecanismos:null, plataformas:null, agente_principal:null, valencia_dominante:null };
   filtroFonteClick=null; sincronizarChipsDim(); render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+// trocar dimensão do cruzamento limpa a seleção anterior e redesenha
+["heat-dim1","heat-dim2"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+  aplicarCruzamento(null);
+  render();
+}));
 </script>
 </body>
 </html>
