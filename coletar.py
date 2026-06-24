@@ -109,20 +109,6 @@ AGENTES = {
     "Estrangeiro": ["estados unidos", "eua", "união europeia", "uniao europeia", "internacional", "outro país", "outro pais"],
 }
 
-# marcador binário de violência política de gênero. não é "valência":
-# é um eixo transversal que pode coexistir com qualquer enquadramento.
-GENERO = {
-    "violência de gênero": [
-        "candidata", "deputada", "senadora", "vereadora", "prefeita", "governadora",
-        "misoginia", "misógino", "misogino", "machismo", "sexista", "sexismo",
-        "violência política de gênero", "violencia politica de genero",
-        "violência de gênero", "violencia de genero", "assédio", "assedio",
-        "nudes", "nude falso", "deepfake sexual", "pornografia", "pornô", "porno",
-        "íntima", "intima", "imagem íntima", "imagem intima", "exposição", "exposicao",
-        "feminicídio", "feminicidio", "mulheres na política", "mulheres na politica",
-    ],
-}
-
 VALENCIA = {
     "regulação": ["tse", "resolução", "resolucao", "norma", "regra", "lei", "proíbe", "proibe", "aprova", "regulamenta", "decisão", "decisao", "obriga", "veta"],
     "caso concreto": ["remove", "remoção", "remocao", "suspende", "condena", "multa", "flagra", "flagrante", "viral", "circula", "circulou", "denúncia", "denuncia", "ação", "acao"],
@@ -175,7 +161,6 @@ def classificar(titulo):
     plataformas = _marcar(t, PLATAFORMAS)
     agentes = _marcar(t, AGENTES)
     valencias = _marcar(t, VALENCIA)
-    generos = _marcar(t, GENERO)
 
     # valência dominante. "caso concreto" tem precedência sobre "regulação"
     # quando há verbo de ação (remove, suspende, circula), porque o relatório
@@ -199,7 +184,6 @@ def classificar(titulo):
         "agente_principal": ag_principal,
         "valencias": "|".join(valencias),
         "valencia_dominante": val_dominante,
-        "genero": "sim" if generos else "não",
         "confianca": "baixa" if not (mecanismos or plataformas or valencias or modelos) else "ok",
     }
 
@@ -246,14 +230,17 @@ if os.path.exists(arquivo):
     df = pd.concat([antigo, novo]).drop_duplicates(subset="link", keep="first")
 
     # reclassifica linhas antigas que não tenham as colunas do codebook
-    cols_cb = ["mecanismos","modelos_llm","modelo_principal","plataformas","agentes","agente_principal","valencias","valencia_dominante","genero","confianca"]
-    falta_coluna = any(c not in df.columns for c in cols_cb)
-    if falta_coluna or df["valencia_dominante"].isna().any() or ("modelo_principal" in df.columns and df["modelo_principal"].isna().any()):
-        for c in cols_cb:
-            if c not in df.columns:
-                df[c] = None
-        # reclassifica onde faltar valência OU faltar o novo campo de modelo
-        faltando = df["valencia_dominante"].isna() | df["modelo_principal"].isna()
+    cols_cb = ["mecanismos","modelos_llm","modelo_principal","plataformas","agentes","agente_principal","valencias","valencia_dominante","confianca"]
+    for c in cols_cb:
+        if c not in df.columns:
+            df[c] = None
+    # remove coluna 'genero' de versões anteriores, se existir
+    if "genero" in df.columns:
+        df = df.drop(columns=["genero"])
+    # reclassifica onde faltar valência OU faltar o campo de modelo (CSV antigo
+    # tem valência preenchida mas não tem modelo_principal -> precisa reprocessar)
+    faltando = df["valencia_dominante"].isna() | df["modelo_principal"].isna() | (df["modelo_principal"].astype(str).str.strip() == "")
+    if faltando.any():
         df.loc[faltando, cols_cb] = df.loc[faltando, "titulo"].apply(
             lambda t: pd.Series(classificar(t))
         )
