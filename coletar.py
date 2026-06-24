@@ -60,7 +60,7 @@ RECORTES = {
 # CODEBOOK LÉXICO (subconjunto operacional do protocolo de 21 campos)
 # Cada dimensão tem categorias; cada categoria tem termos de correspondência.
 # Conservador por construção: marca só o que aparece explícito no título.
-# A coleta usa só o título, então mantém-se enxuto.
+# A coleta usa só o título (RSS não traz corpo), então mantém-se enxuto.
 
 MECANISMOS = {
     "deepfake": ["deepfake", "deep fake", "vídeo falso", "video falso", "áudio falso", "audio falso", "conteúdo sintético", "conteudo sintetico", "face swap", "clonagem de voz"],
@@ -166,6 +166,12 @@ IA_VINCULO = [
     # governança / rotulagem (vínculo institucional com IA)
     "rotulagem de ia", "marca d'água", "marca dagua", "watermark", "provedor de ia",
     "provedores de ia", "regulação de ia", "regulacao de ia",
+    # termos amplos incluídos a pedido (capturam o ecossistema informacional;
+    # aumentam recall mas trazem ruído — "desinformação" e "digital" existem
+    # sem IA, então parte do que marcam como "forte" não terá IA de fato).
+    "desinformação", "desinformacao", "desinformativo", "desinformativa",
+    "digital", "digitais", "fake news", "notícia falsa", "noticia falsa",
+    "notícias falsas", "noticias falsas", "checagem", "fact-checking", "fact checking",
 ]
 
 # termos que indicam recorte de gênero (mulheres na política + violência)
