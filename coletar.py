@@ -27,6 +27,9 @@ RECORTES = {
     "Plataformas e chatbots": [
         '"chatbot" eleição',
         '"ChatGPT" eleição candidato',
+        '"Gemini" eleição',
+        '"Claude" inteligência artificial eleição',
+        '"Grok" eleição',
         '"redes sociais" inteligência artificial eleição',
         '"WhatsApp" desinformação eleição',
         '"IA generativa" campanha política',
@@ -43,6 +46,15 @@ RECORTES = {
         '"inteligência artificial" democracia eleição',
         '"manipulação" eleitoral inteligência artificial',
     ],
+    "Violência política de gênero": [
+        '"deepfake" candidata',
+        '"deepfake" sexual candidata',
+        '"nudes" falsos candidata inteligência artificial',
+        '"violência política de gênero" inteligência artificial',
+        '"misoginia" inteligência artificial eleição',
+        '"imagem falsa" candidata IA',
+        '"inteligência artificial" ataque candidata',
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -54,12 +66,27 @@ RECORTES = {
 
 MECANISMOS = {
     "deepfake": ["deepfake", "deep fake", "vídeo falso", "video falso", "áudio falso", "audio falso", "conteúdo sintético", "conteudo sintetico", "face swap", "clonagem de voz"],
-    "chatbot": ["chatbot", "chatgpt", "gemini", "ia generativa", "assistente virtual", "copilot"],
+    "chatbot": ["chatbot", "chatgpt", "gemini", "claude", "grok", "perplexity", "deepseek", "copilot", "llama", "mistral", "le chat", "ia generativa", "assistente virtual"],
     "microtargeting": ["microtargeting", "micro-targeting", "segmentação", "segmentacao", "psicográfico", "psicografico", "dark post"],
     "bots": ["bot", "bots", "automação", "automacao", "perfil falso", "perfis falsos", "rede de perfis"],
     "copywriting": ["copywriting", "geração de texto", "geracao de texto", "redação automática", "texto por ia"],
     "recomendacao": ["recomendação", "recomendacao", "algoritmo de recomendação", "ranqueia", "ranking", "prioriza"],
     "auditoria": ["auditoria", "fiscalização", "fiscalizacao", "rotulagem", "identificação de ia", "selo", "marca d'água", "watermark"],
+}
+
+# modelos/empresas de LLM identificados nominalmente no título.
+# Dimensão nova, separada das plataformas de distribuição (WhatsApp, etc.),
+# porque "qual modelo" e "em qual rede" são perguntas distintas no protocolo.
+MODELOS_LLM = {
+    "ChatGPT/OpenAI": ["chatgpt", "gpt-4", "gpt-5", "gpt 4", "gpt 5", "openai", "sora", "dall-e", "dall e"],
+    "Gemini/Google": ["gemini", "bard", "google ai", "imagen", "veo"],
+    "Claude/Anthropic": ["claude", "anthropic"],
+    "Grok/xAI": ["grok", "xai"],
+    "Perplexity": ["perplexity"],
+    "DeepSeek": ["deepseek", "deep seek"],
+    "Llama/Meta": ["llama", "meta ai", "meta llama"],
+    "Mistral": ["mistral", "le chat"],
+    "Copilot/Microsoft": ["copilot", "bing chat"],
 }
 
 PLATAFORMAS = {
@@ -70,16 +97,30 @@ PLATAFORMAS = {
     "Meta": ["facebook", "instagram", "meta ", "reels"],
     "YouTube": ["youtube", "yt "],
     "Kwai": ["kwai"],
-    "IA nativa": ["chatgpt", "gemini", "openai", "copilot", "grok"],
+    "IA nativa": ["chatgpt", "gemini", "claude", "grok", "perplexity", "deepseek", "openai", "copilot"],
 }
 
 AGENTES = {
     "Estado": ["tse", "tre", "tre-", "justiça eleitoral", "justica eleitoral", "supremo", "stf", "ministro", "governo", "procuradoria", "ministério público", "ministerio publico"],
-    "Plataforma": ["meta", "google", "openai", "tiktok", "big tech", "plataforma"],
-    "Campanha": ["candidato", "campanha", "pré-candidato", "pre-candidato", "partido", "marqueteiro"],
+    "Plataforma": ["meta", "google", "openai", "anthropic", "xai", "tiktok", "big tech", "plataforma"],
+    "Campanha": ["candidato", "candidata", "campanha", "pré-candidato", "pre-candidato", "partido", "marqueteiro"],
     "Sociedade civil": ["ong", "organização", "organizacao", "instituto", "associação", "associacao", "its rio", "artigo 19", "conectas"],
     "Cidadão": ["eleitor", "cidadão", "cidadao", "usuário", "usuario", "internauta"],
     "Estrangeiro": ["estados unidos", "eua", "união europeia", "uniao europeia", "internacional", "outro país", "outro pais"],
+}
+
+# marcador binário de violência política de gênero. não é "valência":
+# é um eixo transversal que pode coexistir com qualquer enquadramento.
+GENERO = {
+    "violência de gênero": [
+        "candidata", "deputada", "senadora", "vereadora", "prefeita", "governadora",
+        "misoginia", "misógino", "misogino", "machismo", "sexista", "sexismo",
+        "violência política de gênero", "violencia politica de genero",
+        "violência de gênero", "violencia de genero", "assédio", "assedio",
+        "nudes", "nude falso", "deepfake sexual", "pornografia", "pornô", "porno",
+        "íntima", "intima", "imagem íntima", "imagem intima", "exposição", "exposicao",
+        "feminicídio", "feminicidio", "mulheres na política", "mulheres na politica",
+    ],
 }
 
 VALENCIA = {
@@ -130,9 +171,11 @@ def _marcar(texto, dicionario):
 def classificar(titulo):
     t = _texto_norm(titulo)
     mecanismos = _marcar(t, MECANISMOS)
+    modelos = _marcar(t, MODELOS_LLM)
     plataformas = _marcar(t, PLATAFORMAS)
     agentes = _marcar(t, AGENTES)
     valencias = _marcar(t, VALENCIA)
+    generos = _marcar(t, GENERO)
 
     # valência dominante. "caso concreto" tem precedência sobre "regulação"
     # quando há verbo de ação (remove, suspende, circula), porque o relatório
@@ -144,14 +187,20 @@ def classificar(titulo):
     ordem_ag = ["Estado", "Plataforma", "Campanha", "Sociedade civil", "Cidadão", "Estrangeiro"]
     ag_principal = next((a for a in ordem_ag if a in agentes), "não identificado")
 
+    # modelo principal: primeiro modelo citado segue a ordem de declaração
+    modelo_principal = modelos[0] if modelos else "não identificado"
+
     return {
         "mecanismos": "|".join(mecanismos),
+        "modelos_llm": "|".join(modelos),
+        "modelo_principal": modelo_principal,
         "plataformas": "|".join(plataformas),
         "agentes": "|".join(agentes),
         "agente_principal": ag_principal,
         "valencias": "|".join(valencias),
         "valencia_dominante": val_dominante,
-        "confianca": "baixa" if not (mecanismos or plataformas or valencias) else "ok",
+        "genero": "sim" if generos else "não",
+        "confianca": "baixa" if not (mecanismos or plataformas or valencias or modelos) else "ok",
     }
 
 arquivo = "dados/noticias.csv"
@@ -197,12 +246,14 @@ if os.path.exists(arquivo):
     df = pd.concat([antigo, novo]).drop_duplicates(subset="link", keep="first")
 
     # reclassifica linhas antigas que não tenham as colunas do codebook
-    if "valencia_dominante" not in df.columns or df["valencia_dominante"].isna().any():
-        cols_cb = ["mecanismos","plataformas","agentes","agente_principal","valencias","valencia_dominante","confianca"]
+    cols_cb = ["mecanismos","modelos_llm","modelo_principal","plataformas","agentes","agente_principal","valencias","valencia_dominante","genero","confianca"]
+    falta_coluna = any(c not in df.columns for c in cols_cb)
+    if falta_coluna or df["valencia_dominante"].isna().any() or ("modelo_principal" in df.columns and df["modelo_principal"].isna().any()):
         for c in cols_cb:
             if c not in df.columns:
                 df[c] = None
-        faltando = df["valencia_dominante"].isna()
+        # reclassifica onde faltar valência OU faltar o novo campo de modelo
+        faltando = df["valencia_dominante"].isna() | df["modelo_principal"].isna()
         df.loc[faltando, cols_cb] = df.loc[faltando, "titulo"].apply(
             lambda t: pd.Series(classificar(t))
         )
