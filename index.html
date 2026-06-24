@@ -141,8 +141,6 @@
   .tag-dim { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; }
   /* tag de modelo LLM: contorno azul para destacar de mecanismo/plataforma */
   .tag-modelo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: #4945fe14; color: var(--azul); border: 1px solid #4945fe33; white-space: nowrap; }
-  /* selo de vínculo fraco com IA: alerta âmbar discreto */
-  .tag-fraco { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: #b4540014; color: #B45400; border: 1px solid #b4540040; white-space: nowrap; }
 
   /* coluna resumo */
   .stats-side { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 18px; }
@@ -254,11 +252,6 @@
           <div class="nota">enquadramento dominante da matéria</div>
           <div id="graf-valencia"><div class="box-vazio">sem dados</div></div>
         </div>
-        <div class="graf">
-          <h3>vínculo com IA</h3>
-          <div class="nota">forte = IA explícita no título; fraco = veio pela busca mas sem IA evidente. clique para filtrar</div>
-          <div id="graf-vinculo"><div class="box-vazio">sem dados</div></div>
-        </div>
         <div class="graf full">
           <h3>cruzamento entre dimensões</h3>
           <div class="nota">quantas matérias citam cada par; intensidade da cor proporcional à contagem. clique numa célula para filtrar</div>
@@ -270,7 +263,6 @@
                 <option value="plataformas">plataforma</option>
                 <option value="agente_principal">agente principal</option>
                 <option value="valencia_dominante">valência narrativa</option>
-                <option value="vinculo_ia">vínculo com IA</option>
                 <option value="recorte">recorte</option>
               </select>
             </label>
@@ -282,7 +274,6 @@
                 <option value="mecanismos">mecanismo de IA</option>
                 <option value="agente_principal">agente principal</option>
                 <option value="valencia_dominante">valência narrativa</option>
-                <option value="vinculo_ia">vínculo com IA</option>
                 <option value="recorte">recorte</option>
               </select>
             </label>
@@ -336,7 +327,7 @@ document.getElementById("link-csv").href = CSV_URL;
 
 let dados = [];
 let recorteAtivo = null;             // null = todos os recortes
-let filtros = { mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null, vinculo_ia:null };
+let filtros = { mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null };
 let filtroFonteClick = null;
 let filtroSemana = null; // timestamp do domingo da semana filtrada, ou null
 const limpa = s => (s||"").replace(/"/g,'');
@@ -389,12 +380,11 @@ function render(){
       const modelo=(d.modelo_principal && d.modelo_principal!=="não identificado") ? `<span class="tag-modelo">${d.modelo_principal}</span>` : "";
       const mecs=multi(d.mecanismos).slice(0,2).map(m=>`<span class="tag-dim">${m}</span>`).join("");
       const plats=multi(d.plataformas).slice(0,1).map(p=>`<span class="tag-dim">${p}</span>`).join("");
-      const fraco=(d.vinculo_ia==="fraco")?`<span class="tag-fraco" title="o título não traz IA explícita; vínculo presumido pela busca">IA? fraco</span>`:"";
       return `<div class="card" style="--cor:${c}">
         <div class="barra"></div>
         <a class="title" href="${d.link}" target="_blank" rel="noopener">${d.titulo||"(sem título)"}</a>
         <div class="src"><span class="fonte">${d.fonte||"fonte desconhecida"}</span><span class="dot"></span><span>${fmtData(d.data_pub)}</span><span class="dot"></span><span>${d.valencia_dominante||""}</span></div>
-        <div class="tags"><span class="tag-eixo" style="background:${c}">${d.recorte||""}</span>${fraco}${modelo}${mecs}${plats}</div>
+        <div class="tags"><span class="tag-eixo" style="background:${c}">${d.recorte||""}</span>${modelo}${mecs}${plats}</div>
       </div>`;
     }).join("")}</div>`;
   }
@@ -432,7 +422,6 @@ function atualizarAnalise(visiveis){
   desenharHBars("graf-plataformas", contarMulti(visiveis,"plataformas"), "plataformas");
   desenharHBars("graf-agentes", contarSimples(visiveis,"agente_principal"), "agente_principal");
   desenharHBars("graf-valencia", contarSimples(visiveis,"valencia_dominante"), "valencia_dominante");
-  desenharHBars("graf-vinculo", contarSimples(visiveis,"vinculo_ia"), "vinculo_ia");
   desenharHeat(visiveis);
   desenharTopFontes(visiveis);
 }
@@ -535,7 +524,6 @@ const DIM_INFO = {
   "plataformas":       { rotulo:"plataforma", multi:true },
   "agente_principal":  { rotulo:"agente", multi:false, ignora:["não identificado"] },
   "valencia_dominante":{ rotulo:"valência", multi:false, ignora:["não classificável"] },
-  "vinculo_ia":        { rotulo:"vínculo IA", multi:false },
   "recorte":           { rotulo:"recorte", multi:false },
 };
 
@@ -649,7 +637,6 @@ const DIMENSOES = [
   { campo:"plataformas", titulo:"plataforma", multi:true },
   { campo:"agente_principal", titulo:"agente principal", multi:false, ignora:["não identificado"] },
   { campo:"valencia_dominante", titulo:"valência narrativa", multi:false, ignora:["não classificável"] },
-  { campo:"vinculo_ia", titulo:"vínculo com IA", multi:false },
 ];
 
 function valoresDimensao(dim){
@@ -705,7 +692,7 @@ function montarRecortes(recortes){
 
 function abrirRecorte(recorte){
   recorteAtivo=recorte;
-  filtros={ mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null, vinculo_ia:null };
+  filtros={ mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null };
   filtroFonteClick=null; filtroSemana=null;
   document.querySelectorAll(".eixo-chip").forEach(ch=>ch.classList.toggle("on",(ch.dataset.recorte||null)===recorte));
   montarDims();
@@ -733,7 +720,8 @@ function popular(){
 }
 
 Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
-  complete:(res)=>{ dados=res.data.filter(r=>r.link && r.recorte && r.recorte.trim());
+  complete:(res)=>{ dados=res.data.filter(r=>r.link && r.recorte && r.recorte.trim()
+                      && (r.vinculo_ia||"").trim().toLowerCase()!=="fraco");
     if(dados.length===0){ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Corpus vazio</div>O CSV ainda não tem matérias de eleições, ou o caminho está errado.</div>`; return; }
     popular(); },
   error:()=>{ document.getElementById("lista").innerHTML=`<div class="state"><div class="big">Não consegui carregar o CSV</div>Verifique se o repositório é público e o caminho dados/noticias.csv.</div>`; }
@@ -741,7 +729,7 @@ Papa.parse(CSV_URL,{ download:true, header:true, skipEmptyLines:true,
 
 document.getElementById("fa-limpar").addEventListener("click",()=>{
   aplicarCruzamento(null);
-  filtros={ mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null, vinculo_ia:null };
+  filtros={ mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null };
   filtroFonteClick=null; filtroSemana=null; sincronizarChipsDim(); render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
