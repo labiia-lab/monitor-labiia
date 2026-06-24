@@ -57,12 +57,10 @@ RECORTES = {
     ],
 }
 
-# ---------------------------------------------------------------------------
 # CODEBOOK LÉXICO (subconjunto operacional do protocolo de 21 campos)
 # Cada dimensão tem categorias; cada categoria tem termos de correspondência.
 # Conservador por construção: marca só o que aparece explícito no título.
-# A coleta usa só o título (RSS não traz corpo), então mantém-se enxuto.
-# ---------------------------------------------------------------------------
+# A coleta usa só o título, então mantém-se enxuto.
 
 MECANISMOS = {
     "deepfake": ["deepfake", "deep fake", "vídeo falso", "video falso", "áudio falso", "audio falso", "conteúdo sintético", "conteudo sintetico", "face swap", "clonagem de voz"],
@@ -117,6 +115,84 @@ VALENCIA = {
     "ceticismo": ["fracasso", "falha", "ineficaz", "não funciona", "nao funciona", "limite", "questiona"],
     "otimismo": ["oportunidade", "benefício", "beneficio", "potencial", "avanço", "avanco", "ajuda"],
 }
+
+# LÉXICO DE VÍNCULO COM IA — abrangente por construção.
+# Reúne tudo que, aparecendo no título, indica que a matéria trata de IA:
+# termos genéricos, mecanismos, nomes de modelos/empresas, jargão técnico e
+# termos emergentes do debate eleitoral (eleitores sintéticos, enxames, etc.).
+# Usado para (1) validar o recorte de gênero (precisa de IA + gênero no título)
+# e (2) marcar a coluna `vinculo_ia` (forte/fraco) em todas as matérias.
+# Levantado a partir de cobertura de imprensa e textos jurídicos de 2025-2026.
+
+IA_VINCULO = [
+    # genéricos
+    "inteligência artificial", "inteligencia artificial", " ia ", " ia,", " ia.",
+    " ia:", " ia)", "(ia", "ia generativa", "ia-generativa", "a.i.", " ai ",
+    "artificial intelligence",
+    # modelos de linguagem / LLMs
+    "llm", "llms", "modelo de linguagem", "modelos de linguagem",
+    "grande modelo de linguagem", "grandes modelos de linguagem",
+    "modelo de ia", "modelos de ia", "rede neural", "redes neurais",
+    "aprendizado de máquina", "aprendizado de maquina", "machine learning",
+    "aprendizado profundo", "deep learning", "algoritmo", "algorítmico", "algoritmico",
+    # nomes de modelos / produtos / empresas
+    "chatgpt", "gpt-4", "gpt-5", "gpt 4", "gpt 5", "openai", "sora", "dall-e", "dall e",
+    "gemini", "bard", "imagen", "veo", "google ai",
+    "claude", "anthropic", "grok", "xai", "perplexity", "deepseek", "deep seek",
+    "llama", "meta ai", "mistral", "le chat", "copilot", "bing chat", "midjourney",
+    "stable diffusion", "runway", "elevenlabs", "heygen", "synthesia",
+    # mecanismos / conteúdo sintético
+    "deepfake", "deep fake", "deepfakes", "fake profundo",
+    "conteúdo sintético", "conteudo sintetico", "mídia sintética", "midia sintetica",
+    "vídeo falso", "video falso", "áudio falso", "audio falso",
+    "vídeo manipulado", "video manipulado", "imagem manipulada", "imagem falsa",
+    "voz clonada", "clonagem de voz", "clonagem de imagem", "face swap", "troca de rosto",
+    "hiper-realista", "hiper realista", "ultrarrealista", "ultra-realista", "ultra realista",
+    "gerado por ia", "gerada por ia", "gerados por ia", "geradas por ia",
+    "criado por ia", "criada por ia", "feito por ia", "produzido por ia",
+    "manipulação sintética", "manipulacao sintetica",
+    # automação / bots / agentes
+    "bot", "bots", "robô", "robo", "robôs", "robos", "chatbot", "chatbots",
+    "assistente virtual", "agente de ia", "agentes de ia", "agente autônomo",
+    "agentes autônomos", "agentes autonomos", "automação", "automacao",
+    "perfil falso", "perfis falsos", "perfil automatizado", "rede de perfis",
+    "enxame de ia", "enxames de ia", "enxames maliciosos", "milícia digital",
+    "milicias digitais", "milícias digitais", "fábrica de fake", "fabrica de fake",
+    "eleitor sintético", "eleitores sintéticos", "eleitores sinteticos",
+    "persona sintética", "personas sintéticas", "astroturfing",
+    # microtargeting / influência
+    "microtargeting", "micro-targeting", "segmentação algorítmica", "perfilamento",
+    "perfilhamento", "psicográfico", "psicografico",
+    # governança / rotulagem (vínculo institucional com IA)
+    "rotulagem de ia", "marca d'água", "marca dagua", "watermark", "provedor de ia",
+    "provedores de ia", "regulação de ia", "regulacao de ia",
+]
+
+# termos que indicam recorte de gênero (mulheres na política + violência)
+GENERO_TERMOS = [
+    "candidata", "deputada", "senadora", "vereadora", "prefeita", "governadora",
+    "ministra", "presidenta", "primeira-dama", "primeira dama", "política", "politica",
+    "misoginia", "misógino", "misogino", "misógina", "machismo", "machista",
+    "sexista", "sexismo", "violência política de gênero", "violencia politica de genero",
+    "violência de gênero", "violencia de genero", "violência contra a mulher",
+    "violencia contra a mulher", "assédio", "assedio", "nudes", "nude falso",
+    "deepfake sexual", "deepfake íntimo", "deepfake intimo", "pornografia",
+    "pornô", "porno", "imagem íntima", "imagem intima", "íntima", "intima",
+    "exposição", "exposicao", "feminicídio", "feminicidio", "mulher", "mulheres",
+    "lei 14.192", "14192",
+]
+
+
+def tem_vinculo_ia(titulo):
+    """True se o título contém qualquer termo do léxico de IA."""
+    t = _texto_norm(titulo)
+    return any(termo in t for termo in IA_VINCULO)
+
+def tem_termo_genero(titulo):
+    """True se o título contém qualquer termo do léxico de gênero."""
+    t = _texto_norm(titulo)
+    return any(termo in t for termo in GENERO_TERMOS)
+
 
 ANO_MINIMO = 2026
 
@@ -175,6 +251,11 @@ def classificar(titulo):
     # modelo principal: primeiro modelo citado segue a ordem de declaração
     modelo_principal = modelos[0] if modelos else "não identificado"
 
+    # vínculo com IA: "forte" se há mecanismo, modelo ou termo de IA explícito no
+    # título; "fraco" caso contrário (matéria veio pela query, mas o título não
+    # deixa o vínculo evidente). Marcador de confiança transversal a todo recorte.
+    vinculo = "forte" if (mecanismos or modelos or tem_vinculo_ia(titulo)) else "fraco"
+
     return {
         "mecanismos": "|".join(mecanismos),
         "modelos_llm": "|".join(modelos),
@@ -184,6 +265,7 @@ def classificar(titulo):
         "agente_principal": ag_principal,
         "valencias": "|".join(valencias),
         "valencia_dominante": val_dominante,
+        "vinculo_ia": vinculo,
         "confianca": "baixa" if not (mecanismos or plataformas or valencias or modelos) else "ok",
     }
 
@@ -191,6 +273,7 @@ arquivo = "dados/noticias.csv"
 linhas = []
 descartadas_ano = 0
 descartadas_fonte = 0
+descartadas_genero = 0
 
 for recorte, keywords in RECORTES.items():
     for kw in keywords:
@@ -209,6 +292,16 @@ for recorte, keywords in RECORTES.items():
             if ano is not None and ano < ANO_MINIMO:
                 descartadas_ano += 1
                 continue
+
+            # PORTÃO DE CO-OCORRÊNCIA (recorte de gênero):
+            # a query de gênero é leniente e pode trazer matéria sobre candidata
+            # sem qualquer relação com IA. Para o recorte de gênero entrar no
+            # corpus, o título precisa conter SIMULTANEAMENTE um termo de IA e um
+            # termo de gênero — assim o episódio cruza, de fato, IA + gênero.
+            if recorte == "Violência política de gênero":
+                if not (tem_vinculo_ia(titulo) and tem_termo_genero(titulo)):
+                    descartadas_genero += 1
+                    continue
 
             registro = {
                 "objeto": "Eleições 2026",
@@ -230,16 +323,20 @@ if os.path.exists(arquivo):
     df = pd.concat([antigo, novo]).drop_duplicates(subset="link", keep="first")
 
     # reclassifica linhas antigas que não tenham as colunas do codebook
-    cols_cb = ["mecanismos","modelos_llm","modelo_principal","plataformas","agentes","agente_principal","valencias","valencia_dominante","confianca"]
+    cols_cb = ["mecanismos","modelos_llm","modelo_principal","plataformas","agentes","agente_principal","valencias","valencia_dominante","vinculo_ia","confianca"]
     for c in cols_cb:
         if c not in df.columns:
             df[c] = None
     # remove coluna 'genero' de versões anteriores, se existir
     if "genero" in df.columns:
         df = df.drop(columns=["genero"])
-    # reclassifica onde faltar valência OU faltar o campo de modelo (CSV antigo
-    # tem valência preenchida mas não tem modelo_principal -> precisa reprocessar)
-    faltando = df["valencia_dominante"].isna() | df["modelo_principal"].isna() | (df["modelo_principal"].astype(str).str.strip() == "")
+    # reclassifica onde faltar valência, modelo OU vínculo de IA (CSV antigo tem
+    # valência preenchida mas não tem modelo_principal nem vinculo_ia)
+    faltando = (
+        df["valencia_dominante"].isna()
+        | df["modelo_principal"].isna() | (df["modelo_principal"].astype(str).str.strip() == "")
+        | df["vinculo_ia"].isna() | (df["vinculo_ia"].astype(str).str.strip() == "")
+    )
     if faltando.any():
         df.loc[faltando, cols_cb] = df.loc[faltando, "titulo"].apply(
             lambda t: pd.Series(classificar(t))
@@ -249,6 +346,14 @@ if os.path.exists(arquivo):
         df = df[df["data_pub"].apply(lambda s: (ano_da_data(s) is None) or (ano_da_data(s) >= ANO_MINIMO))]
     if "fonte" in df.columns and "link" in df.columns:
         df = df[~df.apply(lambda r: eh_bloqueada(r.get("fonte",""), r.get("link","")), axis=1)]
+    # aplica o portão de co-ocorrência também ao corpus já existente: matéria de
+    # gênero sem IA+gênero no título é removida (limpa coletas anteriores frouxas)
+    if "recorte" in df.columns and "titulo" in df.columns:
+        antes_g = len(df)
+        mask_genero = df["recorte"] == "Violência política de gênero"
+        manter = df["titulo"].apply(lambda t: tem_vinculo_ia(t) and tem_termo_genero(t))
+        df = df[(~mask_genero) | manter]
+        descartadas_genero += antes_g - len(df)
 else:
     df = novo.drop_duplicates(subset="link")
 
@@ -263,4 +368,4 @@ else:
     fora_escopo = 0
 
 df.to_csv(arquivo, index=False)
-print(f"{len(novo)} novas | {len(df)} no total | descartadas: {descartadas_ano} por ano, {descartadas_fonte} por fonte, {fora_escopo} fora de escopo")
+print(f"{len(novo)} novas | {len(df)} no total | descartadas: {descartadas_ano} por ano, {descartadas_fonte} por fonte, {descartadas_genero} no recorte de gênero (sem IA+gênero), {fora_escopo} fora de escopo")
