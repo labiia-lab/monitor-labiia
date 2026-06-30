@@ -16,6 +16,7 @@
     --ink: #15151F; --ink-soft: #6B6B78;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
   body { background: var(--branco); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; line-height: 1.55; }
   .hero { background: linear-gradient(135deg, #4945FE 0%, #2422a8 55%, #15151F 100%); color: var(--branco); padding: 60px 28px 68px; position: relative; overflow: hidden; }
   .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px); background-size: 40px 40px; -webkit-mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%); mask-image: radial-gradient(circle at 75% 25%, #000 0%, transparent 72%); }
@@ -30,6 +31,7 @@
   .stat .num { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--azul); line-height: 1; }
   .stat .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 7px; }
   .wrap { max-width: 1280px; margin: 0 auto; padding: 48px 28px 80px; }
+  @media (max-width: 600px) { .wrap { padding: 32px 16px 60px; } .hero { padding: 44px 18px 60px; } .stats { padding: 0 16px; } }
   .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--azul); background: #4945fe14; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 18px; }
   .section-tag.mt { margin-top: 44px; }
 
@@ -39,9 +41,16 @@
   .coluna-filtros { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-right: 4px; }
   .coluna-filtros::-webkit-scrollbar { width: 6px; }
   .coluna-filtros::-webkit-scrollbar-thumb { background: var(--linha); border-radius: 3px; }
-  @media (max-width: 920px) { .coluna-filtros { position: static; } }
+  @media (max-width: 920px) { .coluna-filtros { position: static; max-height: none; overflow: visible; } }
   .coluna-filtros .section-tag.mt { margin-top: 26px; }
   .coluna-conteudo { min-width: 0; }
+
+  /* botão de abrir/fechar filtros: só aparece no celular */
+  .filtros-toggle { display: none; width: 100%; align-items: center; justify-content: space-between; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--ink); background: var(--claro); border: 1px solid var(--linha); border-radius: 12px; padding: 14px 16px; cursor: pointer; margin-bottom: 16px; }
+  .filtros-toggle .seta { transition: transform .2s; color: var(--azul); }
+  .filtros-toggle.aberto .seta { transform: rotate(180deg); }
+  .filtros-toggle .marca-ativos { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--azul); color: #fff; border-radius: 99px; padding: 2px 9px; display: none; }
+  .filtros-toggle .marca-ativos.tem { display: inline-block; }
 
   /* recortes empilhados verticalmente na coluna estreita */
   .eixos { display: flex; flex-direction: column; gap: 7px; margin-bottom: 4px; }
@@ -64,44 +73,47 @@
   .dimchip.on .c { color: #dcdbff; }
 
   .search { position: relative; margin-bottom: 10px; }
-  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 12px 14px 12px 40px; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; }
+  .search input { width: 100%; background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 12px 14px 12px 40px; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; }
   .search input:focus { border-color: var(--azul); }
   .search input::placeholder { color: var(--ink-soft); }
   .coluna-filtros select#filtro-fonte { width: 100%; }
   .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); }
-  select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 190px; }
+  select { background: var(--claro); border: 1px solid var(--linha); color: var(--ink); padding: 13px 16px; border-radius: 12px; font-family: inherit; font-size: 16px; outline: none; cursor: pointer; min-width: 0; max-width: 100%; }
   select:focus { border-color: var(--azul); }
 
-  /* grade de gráficos de análise (substitui o painel lateral fixo) */
+  /* grade de gráficos de análise */
   .analise { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-bottom: 30px; }
   @media (max-width: 920px) { .analise { grid-template-columns: 1fr; } }
-  .graf { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; }
+  .graf { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; min-width: 0; }
+  @media (max-width: 600px) { .graf { padding: 16px 14px; } }
   .graf.full { grid-column: 1 / -1; }
   .graf h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
   .graf h3::before { content: "//"; color: var(--azul); }
   .graf .nota { font-size: 11px; color: var(--ink-soft); margin-bottom: 16px; }
 
-  /* barras horizontais (mecanismos, plataformas, agentes, valência) */
+  /* barras horizontais */
   .hbars { display: flex; flex-direction: column; gap: 10px; }
   .hbar-item { font-size: 13px; cursor: pointer; }
-  .hbar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .hbar-nome { display: flex; align-items: center; gap: 7px; color: var(--ink); }
+  .hbar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 10px; }
+  .hbar-nome { display: flex; align-items: center; gap: 7px; color: var(--ink); min-width: 0; }
+  .hbar-nome span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hbar-nome .bola { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .hbar-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+  .hbar-qtd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); flex-shrink: 0; }
   .hbar-track { height: 6px; border-radius: 3px; background: var(--claro); overflow: hidden; }
   .hbar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
   .hbar-item:hover .hbar-fill { opacity: .82; }
   .hbar-item.sel .hbar-nome { font-weight: 700; }
 
-  /* volume por semana: barras simples arredondadas e clicáveis */
+  /* volume por semana */
   .stack { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-top: 8px; }
+  @media (max-width: 600px) { .stack { gap: 3px; } }
   .stack-wrap { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; cursor: pointer; }
   .stack-col { display: flex; flex-direction: column; justify-content: flex-end; }
   .stack-bar { width: 100%; background: var(--azul); border-radius: 6px 6px 0 0; transition: background .15s, opacity .15s, transform .12s; min-height: 3px; }
   .stack-wrap:hover .stack-bar { opacity: .85; }
   .stack-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); text-align: center; margin-bottom: 4px; transition: color .15s, font-weight .15s; }
   .stack-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-soft); text-align: center; margin-top: 6px; white-space: nowrap; transform: rotate(-35deg); transform-origin: center; transition: color .15s; }
-  /* quando há uma semana selecionada, as demais ficam claras e a ativa escura */
+  @media (max-width: 600px) { .stack-lbl { font-size: 8px; transform: rotate(-50deg); } }
   .stack.tem-sel .stack-bar { background: #C4C2FF; }
   .stack.tem-sel .stack-wrap.sel .stack-bar { background: #2422A8; transform: scaleY(1.04); transform-origin: bottom; }
   .stack.tem-sel .stack-wrap.sel .stack-num { color: #2422A8; font-weight: 700; }
@@ -110,18 +122,19 @@
 
   /* cruzamento mecanismo x plataforma (mini heatmap) */
   .heat-controls { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .heat-controls label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 5px; }
-  .heat-controls select { min-width: 150px; padding: 8px 12px; font-size: 12px; }
+  .heat-controls label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 5px; flex: 1 1 130px; min-width: 0; }
+  .heat-controls select { min-width: 0; width: 100%; padding: 8px 12px; font-size: 13px; }
   .heat-controls .heat-x { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--azul); padding-bottom: 9px; }
-  .heat { display: grid; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+  .heat-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; padding: 0 4px; }
+  .heat { display: grid; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; min-width: 0; }
   .heat-cell { padding: 7px 4px; text-align: center; border-radius: 5px; color: var(--ink); transition: box-shadow .15s, transform .1s; }
   .heat-cell.clk { cursor: pointer; }
   .heat-cell.clk:hover { box-shadow: 0 0 0 2px var(--azul) inset; }
   .heat-cell.sel { box-shadow: 0 0 0 2px var(--ink) inset; transform: scale(1.02); font-weight: 700; }
   .heat-head { color: var(--ink-soft); font-weight: 700; padding: 6px 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .heat-row-head { color: var(--ink-soft); font-weight: 700; padding: 6px 8px; text-align: right; white-space: nowrap; }
+  .heat-row-head { color: var(--ink-soft); font-weight: 700; padding: 6px 8px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* layout principal: lista + (resumo compacto) */
+  /* layout principal */
   .layout { display: grid; grid-template-columns: 1fr 300px; gap: 28px; align-items: start; }
   @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
 
@@ -137,12 +150,16 @@
   .card .src .fonte { font-weight: 500; }
   .card .src .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-soft); }
   .card .tags { grid-column: 3; grid-row: 1 / span 3; align-self: start; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  /* no celular, as tags vão para baixo do título em linha, para o card não estourar */
+  @media (max-width: 600px) {
+    .card { grid-template-columns: 4px 1fr; padding: 16px 16px; gap: 6px 14px; }
+    .card .tags { grid-column: 2; grid-row: auto; flex-direction: row; flex-wrap: wrap; align-items: flex-start; align-self: auto; margin-top: 8px; }
+    .card a.title { font-size: 16px; }
+  }
   .tag-eixo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; color: var(--branco); white-space: nowrap; }
   .tag-dim { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 99px; background: var(--claro); color: var(--ink-soft); white-space: nowrap; }
-  /* tag de modelo LLM: contorno azul para destacar de mecanismo/plataforma */
   .tag-modelo { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: #4945fe14; color: var(--azul); border: 1px solid #4945fe33; white-space: nowrap; }
 
-  /* coluna resumo */
   .stats-side { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 18px; }
   .box { border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; }
   .box.mt { margin-top: 26px; }
@@ -172,6 +189,14 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   footer { border-top: 1px solid var(--linha); margin-top: 44px; padding-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); text-align: center; }
   footer a { color: var(--azul); text-decoration: none; }
+
+  /* mostra o botão de filtros e esconde a coluna quando fechada — só no celular */
+  @media (max-width: 920px) {
+    .filtros-toggle { display: flex; }
+    .coluna-filtros { display: none; }
+    .coluna-filtros.aberto { display: block; }
+  }
+
 </style>
 </head>
 <body>
@@ -193,6 +218,10 @@
 
 <div class="wrap">
   <div class="painel">
+    <button class="filtros-toggle" id="filtros-toggle" aria-expanded="false" aria-controls="coluna-filtros">
+      <span>filtros e busca <span class="marca-ativos" id="marca-ativos">0</span></span>
+      <span class="seta">▾</span>
+    </button>
     <aside class="coluna-filtros" id="coluna-filtros">
       <div class="section-tag">&lt;busca/&gt;</div>
       <div class="search">
@@ -297,7 +326,6 @@ const REPO = "monitor-labiia";
 const BRANCH = "main";
 const CAMINHO_CSV = "dados/noticias.csv";
 
-// recortes sem cor distinta: tudo no roxo da marca
 const RECORTES_LISTA = [
   "Regulação e TSE",
   "Deepfakes e conteúdo sintético",
@@ -309,8 +337,6 @@ const RECORTES_LISTA = [
 ];
 const corRecorte = e => "#4945FE";
 
-// paleta para o gráfico de volume (valências), amostrada da escala plasma
-// progressão roxo-escuro → magenta → laranja → amarelo
 const TONS_VALENCIA = {
   "caso concreto": "#0D0887",
   "regulação": "#6A00A8",
@@ -326,21 +352,22 @@ const CSV_URL = `https://raw.githubusercontent.com/${USUARIO}/${REPO}/${BRANCH}/
 document.getElementById("link-csv").href = CSV_URL;
 
 let dados = [];
-let recorteAtivo = null;             // null = todos os recortes
+let recorteAtivo = null;
 let filtros = { mecanismos:null, modelos_llm:null, plataformas:null, agente_principal:null, valencia_dominante:null };
 let filtroFonteClick = null;
-let filtroSemana = null; // timestamp do domingo da semana filtrada, ou null
+let filtroSemana = null;
 const limpa = s => (s||"").replace(/"/g,'');
+
+// true quando a viewport é estreita (celular). Usado para encolher o heatmap.
+const ehCelular = () => window.matchMedia("(max-width: 600px)").matches;
 
 function parseData(s){ if(!s) return null; const d=new Date(s); return isNaN(d)?null:d; }
 function fmtData(s){ const d=parseData(s); if(!d) return s||"sem data"; return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }
 function inicioSemana(d){ const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()-x.getDay()); return x; }
 function rotuloSemana(d){ return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}); }
 
-// divide um campo multivalorado "a|b|c" em lista
 function multi(v){ return (v||"").split("|").map(s=>s.trim()).filter(Boolean); }
 
-// uma matéria casa com um filtro de dimensão se o valor estiver entre os seus
 function casaDim(d, campo, alvo){
   if(!alvo) return true;
   if(campo==="mecanismos" || campo==="plataformas" || campo==="modelos_llm") return multi(d[campo]).includes(alvo);
@@ -392,6 +419,15 @@ function render(){
 }
 
 // ---------- filtros ativos ----------
+function contarFiltrosAtivos(){
+  let n=0;
+  for(const campo in filtros){ if(filtros[campo]) n++; }
+  if(filtroFonteClick) n++;
+  if(filtroSemana) n++;
+  if(recorteAtivo) n++;
+  return n;
+}
+
 function desenharFiltrosAtivos(){
   const faixa=document.getElementById("filtros-ativos");
   const pills=document.getElementById("fa-pills");
@@ -411,6 +447,11 @@ function desenharFiltrosAtivos(){
       render();
     });
   });
+  // atualiza o contador no botão de filtros (celular)
+  const marca=document.getElementById("marca-ativos");
+  const n=contarFiltrosAtivos();
+  marca.textContent=n;
+  marca.classList.toggle("tem", n>0);
 }
 
 // ---------- grade de análise ----------
@@ -447,7 +488,7 @@ function desenharHBars(elId, itens, campo){
     const sel = (filtros[campo]===nome) ? " sel" : "";
     return `<div class="hbar-item${sel}" data-campo="${campo}" data-valor="${nome.replace(/"/g,'&quot;')}">
       <div class="hbar-top">
-        <span class="hbar-nome"><span class="bola" style="background:${cor}"></span>${nome}</span>
+        <span class="hbar-nome"><span class="bola" style="background:${cor}"></span><span>${nome}</span></span>
         <span class="hbar-qtd">${qtd}</span>
       </div>
       <div class="hbar-track"><div class="hbar-fill" style="width:${w}%;background:${cor}"></div></div>
@@ -463,10 +504,8 @@ function desenharHBars(elId, itens, campo){
   });
 }
 
-// área empilhada: semanas x valência
 function desenharTemporal(lista){
   const cont=document.getElementById("graf-temporal");
-  // recalcula a lista sem o filtro de semana, para as barras mostrarem todas as semanas
   const semFiltroSemana = recalcularSemSemana();
   const comData=semFiltroSemana.filter(d=>parseData(d.data_pub));
   if(!comData.length){ cont.innerHTML=`<div class="box-vazio">sem matérias com data no recorte atual</div>`; return; }
@@ -474,7 +513,8 @@ function desenharTemporal(lista){
   const maxD=inicioSemana(new Date(Math.max(...comData.map(d=>parseData(d.data_pub)))));
   let semanas=[];
   for(let t=new Date(minD); t<=maxD; t.setDate(t.getDate()+7)){ semanas.push({ini:new Date(t), qtd:0}); }
-  const MAX_SEMANAS=20;
+  // no celular, menos semanas para não espremer as barras
+  const MAX_SEMANAS = ehCelular() ? 12 : 20;
   if(semanas.length>MAX_SEMANAS) semanas=semanas.slice(-MAX_SEMANAS);
   const primeira=semanas[0].ini.getTime();
   comData.forEach(d=>{
@@ -497,13 +537,12 @@ function desenharTemporal(lista){
   cont.querySelectorAll(".stack-wrap").forEach(col=>{
     col.addEventListener("click",()=>{
       const t=Number(col.dataset.semana);
-      filtroSemana=(filtroSemana===t)?null:t; // toggle
+      filtroSemana=(filtroSemana===t)?null:t;
       render();
     });
   });
 }
 
-// recalcula a lista aplicando todos os filtros MENOS o de semana
 function recalcularSemSemana(){
   const q=document.getElementById("q").value.toLowerCase().trim();
   const ffonte=document.getElementById("filtro-fonte").value;
@@ -517,7 +556,6 @@ function recalcularSemSemana(){
   });
 }
 
-// dimensões disponíveis no cruzamento e se são multivaloradas
 const DIM_INFO = {
   "mecanismos":        { rotulo:"mecanismo", multi:true },
   "modelos_llm":       { rotulo:"modelo", multi:true },
@@ -527,28 +565,29 @@ const DIM_INFO = {
   "recorte":           { rotulo:"recorte", multi:false },
 };
 
-// valores de uma matéria numa dimensão (lista, já filtrando ignorados)
 function valoresDe(d, campo){
   const info=DIM_INFO[campo];
   const vs = info.multi ? multi(d[campo]) : [d[campo]].filter(Boolean);
   return vs.filter(v=>!(info.ignora||[]).includes(v));
 }
 
-// ranking de categorias de uma dimensão dentro da lista
 function topCategorias(lista, campo, n){
   const c={};
   lista.forEach(d=>valoresDe(d,campo).forEach(v=>{ c[v]=(c[v]||0)+1; }));
   return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0]);
 }
 
-// heatmap genérico: cruza duas dimensões escolhidas
+// heatmap genérico: cruza duas dimensões escolhidas.
+// no celular reduz para 4x4 (em vez de 6x6) para caber na tela; a margem
+// .heat-scroll garante rolagem horizontal contida caso ainda transborde.
 function desenharHeat(lista){
   const cont=document.getElementById("graf-heat");
   const d1=document.getElementById("heat-dim1").value;
   const d2=document.getElementById("heat-dim2").value;
   if(d1===d2){ cont.innerHTML=`<div class="box-vazio">escolha duas dimensões diferentes</div>`; return; }
-  const linhas=topCategorias(lista,d1,6);
-  const colunas=topCategorias(lista,d2,6);
+  const N = ehCelular() ? 4 : 6;
+  const linhas=topCategorias(lista,d1,N);
+  const colunas=topCategorias(lista,d2,N);
   if(!linhas.length || !colunas.length){ cont.innerHTML=`<div class="box-vazio">sem cruzamentos com dados suficientes</div>`; return; }
   const mat={}; let max=0;
   linhas.forEach(l=>{ mat[l]={}; colunas.forEach(c=>{ mat[l][c]=0; }); });
@@ -556,11 +595,12 @@ function desenharHeat(lista){
     const vl=valoresDe(d,d1), vc=valoresDe(d,d2);
     vl.forEach(l=>{ if(mat[l]) vc.forEach(c=>{ if(mat[l][c]!==undefined){ mat[l][c]++; max=Math.max(max,mat[l][c]); } }); });
   });
-  const cols=`160px repeat(${colunas.length}, 1fr)`;
-  let html=`<div class="heat" style="grid-template-columns:${cols}">`;
+  const rotLin = ehCelular() ? "92px" : "160px";
+  const cols=`${rotLin} repeat(${colunas.length}, minmax(34px, 1fr))`;
+  let html=`<div class="heat-scroll"><div class="heat" style="grid-template-columns:${cols}">`;
   html+=`<div></div>`+colunas.map(c=>`<div class="heat-head" title="${c}">${c}</div>`).join("");
   linhas.forEach(l=>{
-    html+=`<div class="heat-row-head">${l}</div>`;
+    html+=`<div class="heat-row-head" title="${l}">${l}</div>`;
     colunas.forEach(c=>{
       const v=mat[l][c]; const intensidade = max? v/max : 0;
       const bg = v? `rgba(73,69,254,${0.12+intensidade*0.78})` : "var(--claro)";
@@ -570,13 +610,12 @@ function desenharHeat(lista){
       html+=`<div class="heat-cell${sel}${clicavel}" data-l="${l.replace(/"/g,'&quot;')}" data-c="${c.replace(/"/g,'&quot;')}" style="background:${bg};color:${cor}" title="${l} × ${c}: ${v} matéria(s)${v?' — clique para filtrar':''}">${v||""}</div>`;
     });
   });
-  html+=`</div>`;
+  html+=`</div></div>`;
   cont.innerHTML=html;
   cont.querySelectorAll(".heat-cell.clk").forEach(cell=>{
     cell.addEventListener("click",()=>{
       const l=cell.dataset.l, c=cell.dataset.c;
       const jaSel = (heatSel.d1===d1 && heatSel.d2===d2 && heatSel.l===l && heatSel.c===c);
-      // limpa qualquer cruzamento anterior
       aplicarCruzamento(null);
       if(!jaSel){ aplicarCruzamento({d1,d2,l,c}); }
       render();
@@ -584,13 +623,10 @@ function desenharHeat(lista){
   });
 }
 
-// estado do cruzamento selecionado no heatmap
 let heatSel = { d1:null, d2:null, l:null, c:null };
 
-// aplica (ou limpa) um cruzamento como filtros nas dimensões certas
 function aplicarCruzamento(sel){
   if(!sel){
-    // remove o cruzamento anterior dos filtros
     if(heatSel.d1 && heatSel.d1!=="recorte") filtros[heatSel.d1]=null;
     if(heatSel.d2 && heatSel.d2!=="recorte") filtros[heatSel.d2]=null;
     if(heatSel.d1==="recorte" || heatSel.d2==="recorte") { recorteAtivo=null; sincronizarRecorteChips(); }
@@ -598,7 +634,6 @@ function aplicarCruzamento(sel){
     sincronizarChipsDim();
     return;
   }
-  // aplica nas dimensões; recorte vai para recorteAtivo, o resto para filtros
   if(sel.d1==="recorte"){ recorteAtivo=sel.l; } else { filtros[sel.d1]=sel.l; }
   if(sel.d2==="recorte"){ recorteAtivo=sel.c; } else { filtros[sel.d2]=sel.c; }
   heatSel={...sel};
@@ -630,7 +665,7 @@ function desenharTopFontes(visiveis){
   });
 }
 
-// ---------- chips de dimensão (topo) ----------
+// ---------- chips de dimensão ----------
 const DIMENSOES = [
   { campo:"mecanismos", titulo:"mecanismo de IA", multi:true },
   { campo:"modelos_llm", titulo:"modelo de linguagem", multi:true },
@@ -668,7 +703,6 @@ function montarDims(){
     });
   });
 }
-// reflete o estado dos filtros nos chips sem reconstruir tudo
 function sincronizarChipsDim(){
   document.querySelectorAll("#dims .dimchip").forEach(ch=>{
     const on = filtros[ch.dataset.campo]===ch.dataset.valor;
@@ -676,10 +710,9 @@ function sincronizarChipsDim(){
   });
 }
 
-// ---------- recortes (topo) ----------
+// ---------- recortes ----------
 function montarRecortes(recortes){
   const cont=document.getElementById("eixos");
-  // primeiro chip = "todos"
   const todos=`<span class="eixo-chip on" data-recorte="" style="--cor:#4945FE"><span class="bola"></span>todos os recortes</span>`;
   cont.innerHTML=todos+recortes.map(e=>{
     const c=corRecorte(e);
@@ -698,6 +731,15 @@ function abrirRecorte(recorte){
   montarDims();
   render();
 }
+
+// ---------- toggle de filtros (celular) ----------
+const toggleBtn=document.getElementById("filtros-toggle");
+const colunaFiltros=document.getElementById("coluna-filtros");
+toggleBtn.addEventListener("click",()=>{
+  const aberto=colunaFiltros.classList.toggle("aberto");
+  toggleBtn.classList.toggle("aberto", aberto);
+  toggleBtn.setAttribute("aria-expanded", aberto ? "true" : "false");
+});
 
 // ---------- boot ----------
 function popular(){
@@ -733,11 +775,18 @@ document.getElementById("fa-limpar").addEventListener("click",()=>{
   filtroFonteClick=null; filtroSemana=null; sincronizarChipsDim(); render();
 });
 ["q","filtro-fonte"].forEach(id=>document.getElementById(id).addEventListener("input",render));
-// trocar dimensão do cruzamento limpa a seleção anterior e redesenha
 ["heat-dim1","heat-dim2"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
   aplicarCruzamento(null);
   render();
 }));
+// redesenha ao girar/redimensionar para o heatmap trocar entre 4x4 e 6x6
+let resizeTimer;
+window.addEventListener("resize",()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{ if(dados.length) render(); }, 200);
+});
+
 </script>
+
 </body>
 </html>
