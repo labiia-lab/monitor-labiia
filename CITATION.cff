@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Se você usar este material, por favor cite conforme abaixo."
+title: "Monitor de Notícias - IA e Eleições"
+abstract: "Monitoramento automático da cobertura midiática sobre o uso de inteligência artificial nas eleições brasileiras de 2026. Coleta notícias duas vezes ao dia via Google News RSS, classifica cada matéria por seis dimensões de análise e publica o resultado em um painel interativo no GitHub Pages."
+type: software
+authors:
+  - family-names: "Aguiar"
+    given-names: "Larissa Diniz"
+    affiliation: "LABIIA - Laboratório Interdisciplinar de Inteligência Artificial para Métodos, Democracia e Sociedade"
+date-released: "2026-06-30"
+version: "1.0"
+license: "CC-BY-NC-4.0"
+repository-code: "https://github.com/larissacodes/monitor-labiia"
+url: "https://larissacodes.github.io/monitor-labiia/"
+keywords:
+  - "inteligência artificial"
+  - "eleições 2026"
+  - "desinformação"
+  - "deepfake"
+  - "monitoramento de mídia"
+  - "Brasil"
