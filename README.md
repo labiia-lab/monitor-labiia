@@ -85,6 +85,9 @@ monitor-labiia/
 ├── index.html              # painel interativo (GitHub Pages)
 ├── favicon.svg             # ícone do painel
 ├── requirements.txt        # dependências Python
+├── CITATION.cff            # metadados de citação
+├── LICENSE                 # licença de uso (CC BY-NC 4.0)
+├── README.md               # este arquivo
 ├── dados/
 │   └── noticias.csv        # corpus acumulado
 └── .github/workflows/
@@ -100,6 +103,16 @@ monitor-labiia/
 - **Classificação só pelo título** — o RSS não entrega o corpo da matéria, então o classificador trabalha com pouco texto
 - **Recorte por busca** — o recorte vem da busca que trouxe a matéria, não de uma leitura do conteúdo
 - **Dependência do Google Notícias** — a cobertura reflete o que o serviço indexa nos feeds RSS
+
+## Como citar e usar
+
+O monitor é um projeto do LABIIA, no Eixo Política e Sociedade. O código e o acervo são abertos sob a licença Creative Commons Atribuição-NãoComercial 4.0 (CC BY-NC 4.0): você pode copiar, adaptar e redistribuir o material, desde que cite a autoria e não use para fins comerciais.
+
+**ABNT**
+AGUIAR, Larissa Diniz. Monitor de Notícias - IA e Eleições. LABIIA, 2026. Software. Disponível em: https://github.com/larissacodes/monitor-labiia.
+
+**APA**
+Aguiar, L. D. (2026). *Monitor de Notícias - IA e Eleições* [Software]. LABIIA. https://github.com/larissacodes/monitor-labiia
 
 ---
 
