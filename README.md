@@ -4,12 +4,14 @@
 
 **Monitoramento automático da cobertura midiática sobre inteligência artificial nas eleições brasileiras de 2026.**
 
-[![GitHub Pages](https://img.shields.io/badge/painel-online-4945FE?style=flat-square)](https://larissacodes.github.io/monitor-labiia/)
+[![GitHub Pages](https://img.shields.io/badge/painel-online-4945FE?style=flat-square)](https://labiia-lab.github.io/monitor-labiia/)
 [![Coleta automática](https://img.shields.io/badge/coleta-2x%20ao%20dia-4945FE?style=flat-square)](.github/workflows/monitor.yml)
 [![Python](https://img.shields.io/badge/Python-3.11-15151F?style=flat-square&logo=python&logoColor=white)](coletar.py)
 [![GitHub Actions](https://img.shields.io/badge/automação-GitHub%20Actions-15151F?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/monitor.yml)
 
-[Ver o painel](https://larissacodes.github.io/monitor-labiia/) · [Como funciona](#como-funciona) · [Estrutura](#estrutura-do-repositório)
+[Ver o painel](https://labiia-lab.github.io/monitor-labiia/) · [Como funciona](#como-funciona) · [Estrutura](#estrutura-do-repositório)
+
+Um projeto de [`<labiia_lab>`](https://github.com/labiia-lab) · concepção, desenvolvimento e manutenção de **Larissa Diniz Aguiar**
 
 </div>
 
@@ -20,6 +22,8 @@
 O monitor acompanha de forma contínua como a imprensa brasileira cobre o uso de inteligência artificial nas eleições de 2026. O sistema coleta notícias duas vezes ao dia, classifica cada matéria por seis dimensões de análise e apresenta o resultado em um painel interativo. Toda a operação roda sem servidor próprio, na infraestrutura gratuita do GitHub.
 
 O projeto integra o **Eixo B (Política e Sociedade)** do laboratório e segue a lógica do relatório de pesquisa sobre IA e eleições: em vez de classificar cada notícia numa única gaveta temática, trata as eleições como objeto único e marca cada matéria em várias dimensões ao mesmo tempo.
+
+O repositório fica hospedado na organização [labiia-lab](https://github.com/labiia-lab). O desenho metodológico, o código do coletor, o classificador e o painel são de autoria de Larissa Diniz Aguiar.
 
 ## Como funciona
 
@@ -56,11 +60,11 @@ A coleta se organiza em **sete recortes temáticos**, cada um com seu conjunto d
 
 Cada notícia coletada passa por um **classificador léxico** que lê o título e marca cinco dimensões:
 
-- **Mecanismo de IA** — deepfake, chatbot, microtargeting, bots, copywriting, recomendação, auditoria
-- **Modelo de linguagem** — ChatGPT/OpenAI, Gemini/Google, Claude/Anthropic, Grok/xAI, Perplexity, DeepSeek, Llama/Meta, Mistral, Copilot/Microsoft
-- **Plataforma** — WhatsApp, Telegram, TikTok, X/Twitter, Meta, YouTube, Kwai, IA nativa
-- **Agente principal** — Estado, plataforma, campanha, sociedade civil, cidadão, agente estrangeiro
-- **Valência narrativa** — regulação, caso concreto, alerta, análise, ceticismo, otimismo
+- **Mecanismo de IA**, entre deepfake, chatbot, microtargeting, bots, copywriting, recomendação e auditoria
+- **Modelo de linguagem**, entre ChatGPT/OpenAI, Gemini/Google, Claude/Anthropic, Grok/xAI, Perplexity, DeepSeek, Llama/Meta, Mistral e Copilot/Microsoft
+- **Plataforma**, entre WhatsApp, Telegram, TikTok, X/Twitter, Meta, YouTube, Kwai e IA nativa
+- **Agente principal**, entre Estado, plataforma, campanha, sociedade civil, cidadão e agente estrangeiro
+- **Valência narrativa**, entre regulação, caso concreto, alerta, análise, ceticismo e otimismo
 
 Além das cinco dimensões, cada matéria recebe um **grau de vínculo com IA** (forte ou fraco), que indica o quanto o título deixa explícita a relação com inteligência artificial. O painel exibe apenas as matérias de vínculo forte. O recorte de violência política de gênero tem critério próprio: a matéria só entra quando o título traz, ao mesmo tempo, um termo de IA e um termo de gênero.
 
@@ -100,19 +104,23 @@ monitor-labiia/
 
 ## Limitações
 
-- **Classificação só pelo título** — o RSS não entrega o corpo da matéria, então o classificador trabalha com pouco texto
-- **Recorte por busca** — o recorte vem da busca que trouxe a matéria, não de uma leitura do conteúdo
-- **Dependência do Google Notícias** — a cobertura reflete o que o serviço indexa nos feeds RSS
+- **Classificação só pelo título**, já que o RSS não entrega o corpo da matéria e o classificador trabalha com pouco texto
+- **Recorte por busca**, porque o recorte vem da busca que trouxe a matéria, não de uma leitura do conteúdo
+- **Dependência do Google Notícias**, cuja indexação define o que chega aos feeds RSS
+
+## Autoria
+
+Larissa Diniz Aguiar assina a concepção metodológica, o desenvolvimento e a manutenção do monitor, incluindo o coletor em Python, o classificador léxico e o painel. O projeto é hospedado e mantido no âmbito do LABIIA, no Eixo Política e Sociedade.
 
 ## Como citar e usar
 
-O monitor é um projeto do LABIIA, no Eixo Política e Sociedade. O código e o acervo são abertos sob a licença Creative Commons Atribuição-NãoComercial 4.0 (CC BY-NC 4.0): você pode copiar, adaptar e redistribuir o material, desde que cite a autoria e não use para fins comerciais.
+O código e o acervo são abertos sob a licença Creative Commons Atribuição-NãoComercial 4.0 (CC BY-NC 4.0): você pode copiar, adaptar e redistribuir o material, desde que cite a autoria e não use para fins comerciais.
 
 **ABNT**
-AGUIAR, Larissa Diniz. Monitor de Notícias - IA e Eleições. LABIIA, 2026. Software. Disponível em: https://github.com/larissacodes/monitor-labiia.
+Aguiar, Larissa Diniz. Monitor de Notícias - IA e Eleições. LABIIA, 2026. Software. Disponível em: https://github.com/labiia-lab/monitor-labiia.
 
 **APA**
-Aguiar, L. D. (2026). *Monitor de Notícias - IA e Eleições* [Software]. LABIIA. https://github.com/larissacodes/monitor-labiia
+Aguiar, L. D. (2026). *Monitor de Notícias - IA e Eleições* [Software]. LABIIA. https://github.com/labiia-lab/monitor-labiia
 
 ---
 
